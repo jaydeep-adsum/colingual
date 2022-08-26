@@ -34,5 +34,5 @@ class AppBaseController extends Controller
             'success' => true,
             'message' => $message,
         ], 200);
-    }    
+    }
 }

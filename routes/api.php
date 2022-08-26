@@ -15,8 +15,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::namespace('Api')->group(function () {
+    Route::get('swagger', 'SwaggerController@listItem');
+
     Route::post('signup', [UserController::class, 'signup']);
-    Route::middleware('auth:api')->get('/user', function (Request $request) {
-        return $request->user();
-    });
+    Route::post('login', [UserController::class, 'login']);
+//    Route::middleware('auth:api')->get('/user', function (Request $request) {
+//        return $request->user();
+//    });
 });

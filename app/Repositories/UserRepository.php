@@ -16,6 +16,11 @@ class UserRepository extends BaseRepository
         'role',
         'colingual',
         'login_by',
+        'card_number',
+        'exp_date',
+        'cvv',
+        'country',
+        'nickname',
     ];
     public function getFieldsSearchable()
     {

@@ -61,17 +61,15 @@ class Authenticator
     public function attemptLogin(
         array $credentials
      ): ?Authenticatable {
-         if (! $model = config('auth.providers.'.'students'.'.model')) {
+         if (! $model = config('auth.providers.'.'users'.'.model')) {
              throw new RuntimeException('Unable to determine authentication model from configuration.');
          }
          /** @var Authenticatable $user */
-         if (!$user = (new $model)->Where([['email', $credentials['email']]])->first())
+         if (!$user = (new $model)->Where('email', $credentials['email_or_mobile'])->orWhere('mobile_no', $credentials['email_or_mobile'])->first())
          {
              return null;
          }
-         if (! $this->hasher->check($credentials['password'], $user->getAuthPassword())) {
-            return null;
-         }
+
          $user->save();
          return $user;
      }

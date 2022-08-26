@@ -29,6 +29,13 @@ class User extends Authenticatable implements HasMedia
         'role',
         'colingual',
         'login_by',
+        'card_number',
+        'exp_date',
+        'cvv',
+        'country',
+        'nickname',
+        'device_token',
+        'device_type',
     ];
 
     /**

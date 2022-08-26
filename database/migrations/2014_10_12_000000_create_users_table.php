@@ -24,6 +24,13 @@ class CreateUsersTable extends Migration
             $table->enum('role',[0,1])->default(0);
             $table->enum('colingual',[0,1]);
             $table->enum('login_by',[0,1,2,3,4]);
+            $table->string('card_number')->nullable();
+            $table->date('exp_date')->nullable();
+            $table->string('cvv')->nullable();
+            $table->string('country')->nullable();
+            $table->string('nickname')->nullable();
+            $table->string('device_token')->nullable();
+            $table->string('device_type')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
