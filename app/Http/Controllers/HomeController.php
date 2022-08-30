@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+
 class HomeController extends Controller
 {
     /**
@@ -21,6 +23,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('dashboard');
+        $data['users'] = User::where('role','0')->get()->count();
+
+        return view('dashboard',compact('data'));
     }
 }

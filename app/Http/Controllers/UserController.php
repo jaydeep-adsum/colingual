@@ -16,6 +16,9 @@ class UserController extends AppBaseController
      */
     public function index(User $model)
     {
+        if ($request->ajax()) {
+            return Datatables::of((new OrderDatatable())->get($request->all()))->make(true);
+        }
         return view('users.index');
     }
 }

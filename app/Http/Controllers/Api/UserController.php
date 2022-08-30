@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\AppBaseController;
+use App\Mail\SignOtp;
 use App\Models\Authenticator;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -10,6 +11,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Mail;
 use Validator;
 
 class UserController extends AppBaseController
@@ -27,11 +29,94 @@ class UserController extends AppBaseController
      * @param UserRepository $userRepository
      * @param Authenticator $authenticator
      */
-    public function __construct(UserRepository $userRepository,Authenticator $authenticator){
+    public function __construct(UserRepository $userRepository, Authenticator $authenticator)
+    {
         $this->userRepository = $userRepository;
-        $this->authenticator =$authenticator;
+        $this->authenticator = $authenticator;
     }
 
+    /**
+     * Swagger defination got one all product
+     *
+     * @OA\Post(
+     *     tags={"Authentication"},
+     *     path="/signup-otp",
+     *     description="Signup otp",
+     *     summary="Signup otp",
+     *     operationId="signupOtp",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\RequestBody(
+     *     required=true,
+     * @OA\MediaType(
+     *     mediaType="multipart/form-data",
+     * @OA\JsonContent(
+     * @OA\Property(
+     *     property="email",
+     *     type="string"
+     *     ),
+     *    )
+     *   ),
+     *  ),
+     * @OA\Response(
+     *     response=200,
+     *     description="User response",@OA\JsonContent
+     *     (ref="#/components/schemas/SuccessResponse")
+     * ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="403",
+     *     description="Not Authorized Invalid or missing Authorization header",@OA\
+     *     JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * )
+     */
+    public function signupOtp(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email|unique:users',
+            ]);
+            $error = (object)[];
+            if ($validator->fails()) {
+                return response()->json(['status' => false, 'data' => $error, 'message' => implode(', ', $validator->errors()->all())]);
+            }
+
+            $detail['email'] = $request->email;
+            $detail['otp'] = rand(1111,9999);
+            Mail::to($request->email)->send(new SignOtp($detail));
+            if (Mail::failures()) {
+                return $this->sendError('Please check your Email address.');
+            } else {
+                $user = User::create($request->all());
+                if ($user) {
+                    $response = [
+                        'id'=>$user->id,
+                        'email'=>$user->email,
+                        'otp'=>$detail['otp'],
+                    ];
+                    return $this->sendResponse($response, 'Success');
+                } else {
+                    return response()->json(['success' => false, 'data' => $error, 'message' => 'These credentials do not match our records']);
+                }
+            }
+        } catch (Exception $e) {
+            return $this->sendError($e);
+        }
+    }
 
     /**
      * Swagger defination got one all product
@@ -54,6 +139,10 @@ class UserController extends AppBaseController
      *     mediaType="multipart/form-data",
      * @OA\JsonContent(
      * @OA\Property(
+     *     property="user_id",
+     *     type="string"
+     *     ),
+     * @OA\Property(
      *     property="name",
      *     type="string"
      *     ),
@@ -62,7 +151,7 @@ class UserController extends AppBaseController
      *     type="string"
      *     ),
      * @OA\Property(
-     *     property="email",
+     *     property="country_code",
      *     type="string"
      *     ),
      * @OA\Property(
@@ -126,22 +215,27 @@ class UserController extends AppBaseController
      * ),
      * )
      */
-    public function signup(Request $request){
+    public function signup(Request $request)
+    {
         try {
             $validator = Validator::make($request->all(), [
-                'mobile_no' => 'required|numeric|unique:users',
-                'email' => 'required|email|unique:users',
+                'user_id' => 'required',
                 'name' => 'required',
                 'last_name' => 'required',
+                'mobile_no' => 'required|numeric|unique:users',
             ]);
 
             $error = (object)[];
             if ($validator->fails()) {
                 return response()->json(['status' => false, 'data' => $error, 'message' => implode(', ', $validator->errors()->all())]);
             }
-            $user = User::create($request->all());
-            if ($user) {
-                $credentials['mobile'] = $user->mobile_no;
+            $user = $this->userRepository->find($request->user_id);
+            if(!$user){
+                return $this->sendError('Unauthorized User');
+            }
+            $update = $this->userRepository->update($request->all(),$request->user_id);
+            if ($update) {
+                $credentials['id'] = $user->id;
                 $credentials['email'] = $user->email;
                 if ($user = $this->authenticator->attemptSignUp($credentials)) {
                     $tokenResult = $user->createToken('colingual');
@@ -156,7 +250,7 @@ class UserController extends AppBaseController
                     return $this->sendResponse(
                         $success, 'You Have Successfully Signup in to Colingual.'
                     );
-                }else {
+                } else {
                     return response()->json(['success' => false, 'data' => $error, 'message' => 'These credentials do not match our records']);
                 }
             }

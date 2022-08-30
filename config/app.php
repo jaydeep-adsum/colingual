@@ -162,6 +162,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Spatie\MediaLibrary\MediaLibraryServiceProvider::class,
+        Yajra\DataTables\DataTablesServiceProvider::class,
 
         /*
          * Package Service Providers...
