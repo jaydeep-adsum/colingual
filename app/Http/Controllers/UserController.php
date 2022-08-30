@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Datatable\UserDatatable;
-use DataTables;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 
 class UserController extends AppBaseController
