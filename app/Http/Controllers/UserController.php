@@ -2,22 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Http\Requests\UserRequest;
-use Illuminate\Support\Facades\Hash;
+use App\Datatable\UserDatatable;
+use DataTables;
+use Illuminate\Http\Request;
+
 
 class UserController extends AppBaseController
 {
-    /**
-     * Display a listing of the users
-     *
-     * @param  \App\Models\User  $model
-     * @return \Illuminate\View\View
-     */
-    public function index(User $model)
+    public function index(Request $request)
     {
         if ($request->ajax()) {
-            return Datatables::of((new OrderDatatable())->get($request->all()))->make(true);
+            return Datatables::of((new UserDatatable())->get())->make(true);
         }
         return view('users.index');
     }

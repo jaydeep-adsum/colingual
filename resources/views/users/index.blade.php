@@ -17,14 +17,14 @@
                         </div>
                     </div>
                     <div class="col-12">
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table align-items-center table-flush" id="datatable-basic">
+                    <div class="table-responsive py-4">
+                        <table class="table table-flush" id="datatable-basic">
                             <thead class="thead-light">
                             <tr>
                                 <th scope="col">Name</th>
+                                <th scope="col">Last</th>
+                                <th scope="col">Mobile</th>
                                 <th scope="col">Email</th>
-                                <th scope="col">Creation Date</th>
                                 <th scope="col"></th>
                             </tr>
                             </thead>
@@ -50,10 +50,6 @@
 {{--                            </tbody>--}}
                         </table>
                     </div>
-                    <div class="card-footer py-4">
-                        <nav class="d-flex justify-content-end" aria-label="...">
-
-                        </nav>
                     </div>
                 </div>
             </div>
@@ -62,8 +58,59 @@
 @endsection
 @push('js')
     <script>
+    let userUrl = "{{route('user')}}";
     $(document).ready(function () {
-    $('#datatable-basic').DataTable();
+        var tableName = '#datatable-basic';
+        var tbl = $(tableName).DataTable({
+            processing: true,
+            serverSide: true,
+            searchDelay: 500,
+            ajax: {
+                url: userUrl,
+            },
+            // columnDefs: [
+            //     {
+            //         'targets': [4],
+            //         'className': 'text-center',
+            //         'width': '11%'
+            //     },
+            //     {
+            //         'targets': [11],
+            //         'className': 'text-center',
+            //         'orderable': false,
+            //         'width': '10%'
+            //     }
+            // ],
+            columns: [
+                {
+                    data: 'name',
+                    name: 'name'
+                },
+                {
+                    data: 'last_name',
+                    name: 'last_name'
+                },
+                {
+                    data: 'mobile_no',
+                    name: 'mobile_no'
+                },
+                {
+                    data: 'email',
+                    name: 'email '
+                },
+                {
+                    data: function data(row) {
+                        var url = userUrl + '/' + row.id;
+                        return `
+<div class="d-flex"> <a title="Show" class="btn btn-sm mr-1 edit-btn" data-id="${row.id}" href="${url}">
+            <i class="fa-solid fa-eye"></i>
+                </a> <a title="Delete" class="btn btn-sm delete-btn text-white" data-id="${row.id}" href="#">
+           <i class="fa-solid fa-trash"></i>
+                </a></div>`
+                    },
+                    name: 'id',
+                }]
+        });
     });
     </script>
 @endpush

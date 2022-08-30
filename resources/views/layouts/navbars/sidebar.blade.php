@@ -77,7 +77,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('user.index') }}">
+                    <a class="nav-link" href="{{ route('user') }}">
                         <i class="far fa-user" style="color: #f4645f;"></i>  <span class="nav-link-text" style="color: #f4645f;">{{ __('Users') }}</span>
                     </a>
                 </li>
