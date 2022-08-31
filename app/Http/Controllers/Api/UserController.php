@@ -40,7 +40,7 @@ class UserController extends AppBaseController
      *
      * @OA\Post(
      *     tags={"Authentication"},
-     *     path="/emailVerification",
+     *     path="/emailVerify",
      *     description="Signup otp",
      *     summary="Signup otp",
      *     operationId="signupOtp",
