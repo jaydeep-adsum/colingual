@@ -40,7 +40,7 @@ class UserController extends AppBaseController
      *
      * @OA\Post(
      *     tags={"Authentication"},
-     *     path="/signup-otp",
+     *     path="/signup_otp",
      *     description="Signup otp",
      *     summary="Signup otp",
      *     operationId="signupOtp",
@@ -96,7 +96,7 @@ class UserController extends AppBaseController
             }
 
             $detail['email'] = $request->email;
-            $detail['otp'] = rand(1111,9999);
+            $detail['otp'] = rand(111111,999999);
             Mail::to($request->email)->send(new SignOtp($detail));
             if (Mail::failures()) {
                 return $this->sendError('Please check your Email address.');
