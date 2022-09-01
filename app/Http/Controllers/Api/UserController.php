@@ -88,7 +88,7 @@ class UserController extends AppBaseController
     {
         try {
             $validator = Validator::make($request->all(), [
-                'email' => 'required|email|unique:users',
+                'email' => 'required|email:rfc,dns|unique:users',
             ]);
             $error = (object)[];
             if ($validator->fails()) {
@@ -98,21 +98,8 @@ class UserController extends AppBaseController
             $detail['email'] = $request->email;
             $detail['otp'] = rand(111111,999999);
             Mail::to($request->email)->send(new SignOtp($detail));
-            if (Mail::failures()) {
-                return $this->sendError('Please check your Email address.');
-            } else {
-                $user = User::create($request->all());
-                if ($user) {
-                    $response = [
-                        'id'=>$user->id,
-                        'email'=>$user->email,
-                        'otp'=>$detail['otp'],
-                    ];
-                    return $this->sendResponse($response, 'Success');
-                } else {
-                    return response()->json(['success' => false, 'data' => $error, 'message' => 'These credentials do not match our records']);
-                }
-            }
+
+            return $this->sendResponse($detail, 'Success');
         } catch (Exception $e) {
             return $this->sendError($e);
         }
@@ -139,15 +126,15 @@ class UserController extends AppBaseController
      *     mediaType="multipart/form-data",
      * @OA\JsonContent(
      * @OA\Property(
-     *     property="user_id",
-     *     type="string"
-     *     ),
-     * @OA\Property(
      *     property="name",
      *     type="string"
      *     ),
      * @OA\Property(
      *     property="last_name",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="email",
      *     type="string"
      *     ),
      * @OA\Property(
@@ -229,13 +216,9 @@ class UserController extends AppBaseController
             if ($validator->fails()) {
                 return response()->json(['status' => false, 'data' => $error, 'message' => implode(', ', $validator->errors()->all())]);
             }
-            $user = $this->userRepository->find($request->user_id);
-            if(!$user){
-                return $this->sendError('Unauthorized User');
-            }
-            $update = $this->userRepository->update($request->all(),$request->user_id);
-            if ($update) {
-                $credentials['id'] = $user->id;
+            $user = $this->userRepository->create($request->all());
+            if ($user) {
+                $credentials['mobile_no'] = $user->mobile_no;
                 $credentials['email'] = $user->email;
                 if ($user = $this->authenticator->attemptSignUp($credentials)) {
                     $tokenResult = $user->createToken('colingual');

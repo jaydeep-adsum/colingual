@@ -13,7 +13,7 @@ class ResponseUtil
     public static function makeResponse($message, $data)
     {
         return [
-            'success' => true,
+            'status' => true,
             'data'    => $data,
             'message' => $message,
         ];
@@ -28,7 +28,7 @@ class ResponseUtil
     public static function makeError($message, array $data = [])
     {
         $res = [
-            'success' => false,
+            'status' => false,
             'message' => $message,
         ];
 
