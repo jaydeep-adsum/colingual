@@ -205,17 +205,6 @@ class UserController extends AppBaseController
     public function signup(Request $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'user_id' => 'required',
-                'name' => 'required',
-                'last_name' => 'required',
-                'mobile_no' => 'required|numeric|unique:users',
-            ]);
-
-            $error = (object)[];
-            if ($validator->fails()) {
-                return response()->json(['status' => false, 'data' => $error, 'message' => implode(', ', $validator->errors()->all())]);
-            }
             $user = $this->userRepository->create($request->all());
             if ($user) {
                 $credentials['mobile_no'] = $user->mobile_no;
