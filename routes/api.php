@@ -18,6 +18,7 @@ Route::namespace('Api')->group(function () {
     Route::get('swagger', 'SwaggerController@listItem');
 
     Route::post('emailVerify', [UserController::class, 'signupOtp']);
+    Route::post('loginEmailVerify', [UserController::class, 'loginOtp']);
     Route::post('signup', [UserController::class, 'signup']);
     Route::post('login', [UserController::class, 'login']);
 //    Route::middleware('auth:api')->get('/user', function (Request $request) {

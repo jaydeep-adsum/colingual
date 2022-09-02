@@ -205,6 +205,13 @@ class UserController extends AppBaseController
     public function signup(Request $request)
     {
         try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email:rfc,dns|unique:users',
+            ]);
+            $error = (object)[];
+            if ($validator->fails()) {
+                return response()->json(['status' => false, 'data' => $error, 'message' => implode(', ', $validator->errors()->all())]);
+            }
             $user = $this->userRepository->create($request->all());
             if ($user) {
                 $credentials['mobile_no'] = $user->mobile_no;
@@ -226,6 +233,79 @@ class UserController extends AppBaseController
                     return response()->json(['success' => false, 'data' => $error, 'message' => 'These credentials do not match our records']);
                 }
             }
+        } catch (Exception $e) {
+            return $this->sendError($e);
+        }
+    }
+
+    /**
+     * Swagger defination got one all product
+     *
+     * @OA\Post(
+     *     tags={"Authentication"},
+     *     path="/loginEmailVerify",
+     *     description="Login otp",
+     *     summary="Login otp",
+     *     operationId="loginOtp",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\RequestBody(
+     *     required=true,
+     * @OA\MediaType(
+     *     mediaType="multipart/form-data",
+     * @OA\JsonContent(
+     * @OA\Property(
+     *     property="email",
+     *     type="string"
+     *     ),
+     *    )
+     *   ),
+     *  ),
+     * @OA\Response(
+     *     response=200,
+     *     description="User response",@OA\JsonContent
+     *     (ref="#/components/schemas/SuccessResponse")
+     * ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="403",
+     *     description="Not Authorized Invalid or missing Authorization header",@OA\
+     *     JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * )
+     */
+    public function loginOtp(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email:rfc,dns',
+            ]);
+            $error = (object)[];
+            if ($validator->fails()) {
+                return response()->json(['status' => false, 'data' => $error, 'message' => implode(', ', $validator->errors()->all())]);
+            }
+            $users = User::where('email',$request->email)->first();
+            if(is_null($users)){
+                return $this->sendError('unauthorized');
+            }
+            $detail['email'] = $request->email;
+            $detail['otp'] = rand(111111,999999);
+            Mail::to($request->email)->send(new SignOtp($detail));
+
+            return $this->sendResponse($detail, 'Success');
         } catch (Exception $e) {
             return $this->sendError($e);
         }
@@ -283,10 +363,15 @@ class UserController extends AppBaseController
     public function login(Request $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'email_or_mobile' => 'required',
-            ]);
-
+            if (filter_var($request->email_or_mobile, FILTER_VALIDATE_EMAIL)) {
+                $validator = Validator::make($request->all(), [
+                    'email_or_mobile' => 'required|email:rfc,dns',
+                ]);
+            } else {
+                $validator = Validator::make($request->all(), [
+                    'email_or_mobile' => 'required',
+                ]);
+            }
             $error = (object)[];
             if ($validator->fails()) {
 

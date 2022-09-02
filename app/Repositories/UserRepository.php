@@ -13,6 +13,7 @@ class UserRepository extends BaseRepository
         'mobile_no',
         'email',
         'password',
+        'country_code',
         'role',
         'colingual',
         'login_by',

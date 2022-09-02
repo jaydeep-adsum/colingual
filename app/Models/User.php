@@ -26,6 +26,7 @@ class User extends Authenticatable implements HasMedia
         'mobile_no',
         'email',
         'password',
+        'country_code',
         'role',
         'colingual',
         'login_by',
