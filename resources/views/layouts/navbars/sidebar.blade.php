@@ -72,13 +72,13 @@
 {{--            </form>--}}
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('home') }}">
-                        <i class="ni ni-tv-2 text-primary"></i> {{ __('Dashboard') }}
+                    <a class="nav-link {{Request::is('home')?'active':''}}" href="{{ route('home') }}">
+                        <i class="ni ni-tv-2"></i> <span>{{ __('Dashboard') }}</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('user') }}">
-                        <i class="far fa-user" style="color: #f4645f;"></i>  <span class="nav-link-text" style="color: #f4645f;">{{ __('Users') }}</span>
+                    <a class="nav-link {{Request::is('user')?'active':''}}" href="{{ route('user') }}">
+                        <i class="far fa-user"></i>{{ __('Users') }}
                     </a>
                 </li>
             </ul>

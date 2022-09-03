@@ -21,11 +21,12 @@
                         <table class="table table-flush" id="datatable-basic">
                             <thead class="thead-light">
                             <tr>
-                                <th scope="col">Name</th>
-                                <th scope="col">Last</th>
-                                <th scope="col">Mobile</th>
-                                <th scope="col">Email</th>
-                                <th scope="col"></th>
+                                <th scope="col">{{__('Name')}}</th>
+                                <th scope="col">{{__('Last')}}</th>
+                                <th scope="col">{{__('Mobile')}}</th>
+                                <th scope="col">{{__('Email')}}</th>
+                                <th scope="col">{{__('Login By')}}</th>
+                                <th scope="col">{{__('Action')}}</th>
                             </tr>
                             </thead>
 {{--                            <tbody>--}}
@@ -68,19 +69,24 @@
             ajax: {
                 url: userUrl,
             },
-            // columnDefs: [
+            "language": {
+                "paginate": {
+                    "previous": "<i class='fas fa-chevron-left'></i>",
+                    "next": "<i class='fas fa-chevron-right'></i>"
+                }
+            },
+            columnDefs: [
             //     {
             //         'targets': [4],
             //         'className': 'text-center',
             //         'width': '11%'
             //     },
-            //     {
-            //         'targets': [11],
-            //         'className': 'text-center',
-            //         'orderable': false,
-            //         'width': '10%'
-            //     }
-            // ],
+                {
+                    'targets': [4],
+                    'className': 'text-center',
+                    'orderable': false
+                }
+            ],
             columns: [
                 {
                     data: 'name',
@@ -100,18 +106,40 @@
                 },
                 {
                     data: function data(row) {
-                        var url = userUrl + '/' + row.id;
+                        if (row.login_by==2){
+                            return `<i class="fas fa-apple-alt"></i>`
+                        } else if (row.login_by==3){
+                            return `<i class="fa fa-facebook-square"></i>`
+                        } else if (row.login_by==4){
+                            return `<i class="fa fa-google"></i>`
+                        } else {
+                            return `<i class="fas fa-mobile-alt"></i>`
+                        }
+                    },
+                    name: 'login_by'
+                },
+                {
+                    data: function data(row) {
+                        var url = userUrl + '/' + row.id+'/edit';
                         return `
-<div class="d-flex"> <a title="Show" class="btn btn-sm mr-1 edit-btn" data-id="${row.id}" href="${url}">
-            <i class="fa-solid fa-eye"></i>
-                </a> <a title="Delete" class="btn btn-sm delete-btn text-white" data-id="${row.id}" href="#">
-           <i class="fa-solid fa-trash"></i>
+<div class="d-flex justify-content-center"> <a title="Edit" class="btn btn-sm mr-1 edit-btn" href="${url}">
+            <i class="fas fa-edit"></i>
+                </a> <a title="Delete" class="btn btn-sm delete-btn" data-id="${row.id}" href="#">
+           <i class="fas fa-trash"></i>
                 </a></div>`
                     },
                     name: 'id',
                 }]
         });
+
+        $(document).on('click', '.delete-btn', function (event) {
+            var userId = $(event.currentTarget).attr('data-id');
+            deleteItem(userUrl + '/' + userId, tableName, 'User');
+        });
+
     });
+
+
     </script>
 @endpush
 

@@ -5,6 +5,7 @@
             <div class="row">
                 <div class="col-xl-3 col-lg-6">
                     <div class="card card-stats mb-4 mb-xl-0">
+                        <a href="{{route('user')}}">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col">
@@ -22,6 +23,7 @@
                                 <span class="text-nowrap">Since last month</span>
                             </p>
                         </div>
+                        </a>
                     </div>
                 </div>
 {{--                <div class="col-xl-3 col-lg-6">--}}

@@ -163,7 +163,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Spatie\MediaLibrary\MediaLibraryServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
-
+        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         /*
          * Package Service Providers...
          */

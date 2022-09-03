@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -22,8 +24,12 @@ Auth::routes();
 
 
 Route::group(['middleware' => 'auth'], function () {
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-	Route::get('user',[\App\Http\Controllers\UserController::class,'index'])->name('user');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
+	Route::get('user',[UserController::class,'index'])->name('user');
+    Route::get('user/{user}/edit', [UserController::class, 'edit'])->name('user.edit');
+    Route::post('user/update/{id}', [UserController::class, 'update'])->name('user.update');
+    Route::delete('user/{user}', [UserController::class, 'destroy'])->name('user.destroy');
+
 	Route::get('profile', ['as' => 'profile.edit', 'uses' => 'App\Http\Controllers\ProfileController@edit']);
 	Route::put('profile', ['as' => 'profile.update', 'uses' => 'App\Http\Controllers\ProfileController@update']);
 	Route::put('profile/password', ['as' => 'profile.password', 'uses' => 'App\Http\Controllers\ProfileController@password']);
