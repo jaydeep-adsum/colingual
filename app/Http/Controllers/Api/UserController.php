@@ -394,7 +394,7 @@ class UserController extends AppBaseController
                     $success, 'You Have Successfully Logged in to colingual.'
                 );
             } else {
-                return response()->json(['success' => false, 'data' => $error, 'message' => 'These credentials do not match our records']);
+                return response()->json(['status' => false, 'data' => $error, 'message' => 'These credentials do not match our records']);
             }
         } catch (Exception $e) {
             return $this->sendError($e);
