@@ -97,7 +97,7 @@ class UserController extends AppBaseController
             }
 
             $detail['email'] = $request->email;
-            $detail['otp'] = rand(111111,999999);
+            $detail['otp'] = rand(111111, 999999);
             Mail::to($request->email)->send(new SignOtp($detail));
 
             return $this->sendResponse($detail, 'Success');
@@ -298,12 +298,12 @@ class UserController extends AppBaseController
             if ($validator->fails()) {
                 return response()->json(['status' => false, 'data' => $error, 'message' => implode(', ', $validator->errors()->all())]);
             }
-            $users = User::where('email',$request->email)->first();
-            if(is_null($users)){
+            $users = User::where('email', $request->email)->first();
+            if (is_null($users)) {
                 return $this->sendError('unauthorized');
             }
             $detail['email'] = $request->email;
-            $detail['otp'] = rand(111111,999999);
+            $detail['otp'] = rand(111111, 999999);
             Mail::to($request->email)->send(new SignOtp($detail));
 
             return $this->sendResponse($detail, 'Success');
@@ -486,40 +486,93 @@ class UserController extends AppBaseController
      * }
      * )
      */
-    public function edit(Request $request){
+    public function edit(Request $request)
+    {
         $user = Auth::user();
-        if(is_null($user)){
+        if (is_null($user)) {
             return $this->sendError('unauthorized');
         }
-        if (isset($request->name) && $request->name!=''){
+        if (isset($request->name) && $request->name != '') {
             $user->name = $request->name;
         }
-        if (isset($request->last_name) && $request->last_name!=''){
+        if (isset($request->last_name) && $request->last_name != '') {
             $user->last_name = $request->last_name;
         }
-        if (isset($request->mobile_no) && $request->mobile_no!=''){
+        if (isset($request->mobile_no) && $request->mobile_no != '') {
             $user->mobile_no = $request->mobile_no;
         }
-        if (isset($request->email) && $request->email!=''){
+        if (isset($request->email) && $request->email != '') {
             $user->email = $request->email;
         }
-        if (isset($request->card_number) && $request->card_number!=''){
+        if (isset($request->card_number) && $request->card_number != '') {
             $user->card_number = $request->card_number;
         }
-        if (isset($request->exp_date) && $request->exp_date!=''){
+        if (isset($request->exp_date) && $request->exp_date != '') {
             $user->exp_date = $request->exp_date;
         }
-        if (isset($request->cvv) && $request->cvv!=''){
+        if (isset($request->cvv) && $request->cvv != '') {
             $user->cvv = $request->cvv;
         }
-        if (isset($request->country) && $request->country!=''){
+        if (isset($request->country) && $request->country != '') {
             $user->country = $request->country;
         }
-        if (isset($request->nickname) && $request->nickname!=''){
+        if (isset($request->nickname) && $request->nickname != '') {
             $user->nickname = $request->nickname;
         }
         $user->save();
 
+        return $this->sendResponse(
+            $user, 'User profile updated Successfully.'
+        );
+    }
+
+    /**
+     * Swagger definition for Products
+     *
+     * @OA\Get(
+     *     tags={"User"},
+     *     path="/getUser",
+     *     description="Get User",
+     *     summary="Get User",
+     *     operationId="getUser",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\Response(
+     *     response=200,
+     *     description="Succuess response"
+     *     ,@OA\JsonContent(ref="#/components/schemas/SuccessResponse")
+     *     ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="401",
+     *     description="Not Authorized Invalid or missing Authorization header"
+     *     ,@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *  ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function getUser()
+    {
+        $user = Auth::user();
+        if (is_null($user)) {
+            return $this->sendError('unauthorized');
+        }
         return $this->sendResponse(
             $user, 'User profile updated Successfully.'
         );
