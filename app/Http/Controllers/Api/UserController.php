@@ -7,6 +7,7 @@ use App\Mail\SignOtp;
 use App\Models\Authenticator;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use Auth;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -399,5 +400,128 @@ class UserController extends AppBaseController
         } catch (Exception $e) {
             return $this->sendError($e);
         }
+    }
+
+    /**
+     * Swagger defination Customer profile edit
+     *
+     * @OA\Post(
+     *     tags={"User"},
+     *     path="/edit",
+     *     description="Edit Profile",
+     *     summary="Edit Profile",
+     *     operationId="edit",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\RequestBody(
+     *     required=true,
+     * @OA\MediaType(
+     *     mediaType="multipart/form-data",
+     * @OA\JsonContent(
+     * @OA\Property(
+     *     property="name",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="last_name",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="mobile_no",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="email",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="card_number",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="exp_date",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="cvv",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="country",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="nickname",
+     *     type="string"
+     *     ),
+     *    )
+     *   ),
+     *  ),
+     * @OA\Response(
+     *     response=200,
+     *     description="User response",@OA\JsonContent
+     *     (ref="#/components/schemas/SuccessResponse")
+     * ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="403",
+     *     description="Not Authorized Invalid or missing Authorization header",@OA\
+     *     JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function edit(Request $request){
+        $user = Auth::user();
+        if(is_null($user)){
+            return $this->sendError('unauthorized');
+        }
+        if (isset($request->name) && $request->name!=''){
+            $user->name = $request->name;
+        }
+        if (isset($request->last_name) && $request->last_name!=''){
+            $user->last_name = $request->last_name;
+        }
+        if (isset($request->mobile_no) && $request->mobile_no!=''){
+            $user->mobile_no = $request->mobile_no;
+        }
+        if (isset($request->email) && $request->email!=''){
+            $user->email = $request->email;
+        }
+        if (isset($request->card_number) && $request->card_number!=''){
+            $user->card_number = $request->card_number;
+        }
+        if (isset($request->exp_date) && $request->exp_date!=''){
+            $user->exp_date = $request->exp_date;
+        }
+        if (isset($request->cvv) && $request->cvv!=''){
+            $user->cvv = $request->cvv;
+        }
+        if (isset($request->country) && $request->country!=''){
+            $user->country = $request->country;
+        }
+        if (isset($request->nickname) && $request->nickname!=''){
+            $user->nickname = $request->nickname;
+        }
+        $user->save();
+
+        return $this->sendResponse(
+            $user, 'User profile updated Successfully.'
+        );
     }
 }

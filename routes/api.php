@@ -21,7 +21,7 @@ Route::namespace('Api')->group(function () {
     Route::post('loginEmailVerify', [UserController::class, 'loginOtp']);
     Route::post('signup', [UserController::class, 'signup']);
     Route::post('login', [UserController::class, 'login']);
-//    Route::middleware('auth:api')->get('/user', function (Request $request) {
-//        return $request->user();
-//    });
+    Route::group(['middleware' => 'auth:api'], function () {
+      Route::post('edit',[UserController::class,'edit']);
+    });
 });
