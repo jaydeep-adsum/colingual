@@ -37,7 +37,6 @@ class UserController extends AppBaseController
      */
     public function index(Request $request)
     {
-        dd(User::all());
         if ($request->ajax()) {
             return Datatables::of((new UserDatatable())->get())->make(true);
         }
