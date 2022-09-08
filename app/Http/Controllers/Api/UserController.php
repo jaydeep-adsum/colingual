@@ -443,8 +443,8 @@ class UserController extends AppBaseController
      *     type="string"
      *     ),
      * @OA\Property(
-     *     property="image_url",
-     *     type="string"
+     *     property="image",
+     *     type="file"
      *     ),
      * @OA\Property(
      *     property="card_number",
@@ -512,8 +512,11 @@ class UserController extends AppBaseController
         if (isset($request->email) && $request->email != '') {
             $user->email = $request->email;
         }
-        if (isset($request->image_url) && $request->image_url != '') {
-            $user->image_url = $request->image_url;
+        if ($request->file('image') !== null){
+            $file = $request->file('image');
+            $image_name = $file->getClientOriginalName();
+            $file->move(public_path('images'),$image_name);
+            $user->image_url = config('app.url').'public/images/'.$image_name;
         }
         if (isset($request->card_number) && $request->card_number != '') {
             $user->card_number = $request->card_number;
