@@ -30,6 +30,7 @@ class User extends Authenticatable implements HasMedia
         'role',
         'colingual',
         'login_by',
+        'image_url',
         'card_number',
         'exp_date',
         'cvv',
@@ -56,4 +57,14 @@ class User extends Authenticatable implements HasMedia
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+//    public function getImageUrlAttribute()
+//    {
+//        $media = $this->user;
+//        if (! empty($media)) {
+//            return $media->;
+//        }
+//
+//        return asset('assets/img/employer-image.png');
+//    }
 }

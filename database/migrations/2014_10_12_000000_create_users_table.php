@@ -22,8 +22,12 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
+            $table->string('image_url')->nullable();
             $table->enum('role',[0,1])->default(0);
             $table->enum('colingual',[0,1]);
+            $table->enum('video',[0,1]);
+            $table->enum('audio',[0,1]);
+            $table->enum('chat',[0,1]);
             $table->enum('login_by',[0,1,2,3,4]);
             $table->string('card_number')->nullable();
             $table->string('exp_date')->nullable();

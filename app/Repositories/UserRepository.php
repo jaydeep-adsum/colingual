@@ -16,6 +16,7 @@ class UserRepository extends BaseRepository
         'country_code',
         'role',
         'colingual',
+        'image_url',
         'login_by',
         'card_number',
         'exp_date',

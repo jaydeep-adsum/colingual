@@ -147,6 +147,10 @@ class UserController extends AppBaseController
      *     type="string"
      *     ),
      * @OA\Property(
+     *     property="image_url",
+     *     type="string"
+     *     ),
+     * @OA\Property(
      *     property="login_by",
      *     type="string"
      *     ),
@@ -439,6 +443,10 @@ class UserController extends AppBaseController
      *     type="string"
      *     ),
      * @OA\Property(
+     *     property="image_url",
+     *     type="string"
+     *     ),
+     * @OA\Property(
      *     property="card_number",
      *     type="string"
      *     ),
@@ -503,6 +511,9 @@ class UserController extends AppBaseController
         }
         if (isset($request->email) && $request->email != '') {
             $user->email = $request->email;
+        }
+        if (isset($request->image_url) && $request->image_url != '') {
+            $user->image_url = $request->image_url;
         }
         if (isset($request->card_number) && $request->card_number != '') {
             $user->card_number = $request->card_number;
@@ -573,6 +584,226 @@ class UserController extends AppBaseController
         if (is_null($user)) {
             return $this->sendError('unauthorized');
         }
+        return $this->sendResponse(
+            $user, 'User profile updated Successfully.'
+        );
+    }
+
+    /**
+     * Swagger definition for Products
+     *
+     * @OA\Get(
+     *     tags={"User"},
+     *     path="/isColingual",
+     *     description="Service as Colingual",
+     *     summary="Service as Colingual",
+     *     operationId="isColingual",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\Response(
+     *     response=200,
+     *     description="Succuess response"
+     *     ,@OA\JsonContent(ref="#/components/schemas/SuccessResponse")
+     *     ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="401",
+     *     description="Not Authorized Invalid or missing Authorization header"
+     *     ,@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *  ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function isColingual(){
+        $user = Auth::user();
+        if($user->colingual=='0'){
+            $user->colingual = '1';
+        } else{
+            $user->colingual = '0';
+        }
+        $user->save();
+
+        return $this->sendResponse(
+            $user, 'User profile updated Successfully.'
+        );
+    }
+
+    /**
+     * Swagger definition for Products
+     *
+     * @OA\Get(
+     *     tags={"User"},
+     *     path="/isVideo",
+     *     description="Available for Video",
+     *     summary="Available for Video",
+     *     operationId="isVideo",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\Response(
+     *     response=200,
+     *     description="Succuess response"
+     *     ,@OA\JsonContent(ref="#/components/schemas/SuccessResponse")
+     *     ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="401",
+     *     description="Not Authorized Invalid or missing Authorization header"
+     *     ,@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *  ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function isVideo(){
+        $user = Auth::user();
+        if($user->video=='0'){
+            $user->video = '1';
+        } else{
+            $user->video = '0';
+        }
+        $user->save();
+
+        return $this->sendResponse(
+            $user, 'User profile updated Successfully.'
+        );
+    }
+
+    /**
+     * Swagger definition for Products
+     *
+     * @OA\Get(
+     *     tags={"User"},
+     *     path="/isAudio",
+     *     description="Available for Audio",
+     *     summary="Available for Audio",
+     *     operationId="isAudio",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\Response(
+     *     response=200,
+     *     description="Succuess response"
+     *     ,@OA\JsonContent(ref="#/components/schemas/SuccessResponse")
+     *     ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="401",
+     *     description="Not Authorized Invalid or missing Authorization header"
+     *     ,@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *  ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function isAudio(){
+        $user = Auth::user();
+        if($user->audio=='0'){
+            $user->audio = '1';
+        } else{
+            $user->audio = '0';
+        }
+        $user->save();
+
+        return $this->sendResponse(
+            $user, 'User profile updated Successfully.'
+        );
+    }
+
+    /**
+     * Swagger definition for Products
+     *
+     * @OA\Get(
+     *     tags={"User"},
+     *     path="/isChat",
+     *     description="Available for Chat",
+     *     summary="Available for Chat",
+     *     operationId="isChat",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\Response(
+     *     response=200,
+     *     description="Succuess response"
+     *     ,@OA\JsonContent(ref="#/components/schemas/SuccessResponse")
+     *     ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="401",
+     *     description="Not Authorized Invalid or missing Authorization header"
+     *     ,@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *  ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function isChat(){
+        $user = Auth::user();
+        if($user->chat=='0'){
+            $user->chat = '1';
+        } else{
+            $user->chat = '0';
+        }
+        $user->save();
+
         return $this->sendResponse(
             $user, 'User profile updated Successfully.'
         );
