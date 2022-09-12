@@ -81,6 +81,11 @@
                         <i class="far fa-user"></i>{{ __('Users') }}
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{Request::is('language')?'active':''}}" href="{{ route('language.index') }}">
+                        <i class="fas fa-language"></i>{{ __('Languages') }}
+                    </a>
+                </li>
             </ul>
         </div>
     </div>

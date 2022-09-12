@@ -17,7 +17,6 @@ window.deleteItem = function (url, tableId, header, callFunction = null) {
             confirmButtonText: 'Yes',
         },
         function () {
-            console.log(url)
             deleteItemAjax(url, tableId, header, callFunction = null);
         });
 };
@@ -28,7 +27,7 @@ function deleteItemAjax(url, tableId, header, callFunction = null) {
         type: 'DELETE',
         dataType: 'json',
         success: function (obj) {
-            if (obj.success) {
+            if (obj.status) {
                 if ($(tableId).DataTable().data().count() == 1) {
                     $(tableId).DataTable().page('previous').draw('page');
                 } else {

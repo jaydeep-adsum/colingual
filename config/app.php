@@ -164,6 +164,7 @@ return [
         Spatie\MediaLibrary\MediaLibraryServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+        LaraIzitoast\LaraIzitoastServiceProvider::class,
         /*
          * Package Service Providers...
          */

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\LanguageController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -28,5 +29,6 @@ Route::namespace('Api')->group(function () {
       Route::get('isVideo',[UserController::class,'isVideo']);
       Route::get('isAudio',[UserController::class,'isAudio']);
       Route::get('isChat',[UserController::class,'isChat']);
+      Route::get('languages',[LanguageController::class,'index']);
     });
 });

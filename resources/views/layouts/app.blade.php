@@ -21,6 +21,7 @@
         <link rel="stylesheet" href="{{asset('public/assets/vendor/datatables.net-bs4/css/dataTables.bootstrap4.min.css')}}">
         <link rel="stylesheet" type="text/css" href="{{ asset('public/assets/vendor/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css')}}">
         <!-- Argon CSS -->
+        <link href="{{ asset('public/css/iziToast.css') }}" rel="stylesheet">
         <link type="text/css" href="{{ asset('public/argon') }}/css/argon.css?v=1.0.0" rel="stylesheet">
         <style>
             .edit-btn{
@@ -70,6 +71,7 @@
         <script src="{{asset('public/assets/vendor/datatables.net-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
         <script type="text/javascript" src="{{ asset('public/assets/vendor/datatables.net-buttons/js/dataTables.buttons.min.js')}}"></script>
         <script src="{{ asset('public/js/custom.js') }}"></script>
+        <script src="{{ asset('public/js/iziToast.js') }}"></script>
         @stack('js')
 
         <!-- Argon JS -->
