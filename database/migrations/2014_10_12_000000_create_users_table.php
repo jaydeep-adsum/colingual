@@ -29,6 +29,8 @@ class CreateUsersTable extends Migration
             $table->enum('audio',[0,1]);
             $table->enum('chat',[0,1]);
             $table->enum('login_by',[0,1,2,3,4]);
+            $table->integer('primary_language')->nullable();
+            $table->string('languages')->nullable();
             $table->string('card_number')->nullable();
             $table->string('exp_date')->nullable();
             $table->string('cvv')->nullable();

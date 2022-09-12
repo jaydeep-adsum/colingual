@@ -22,13 +22,13 @@ Route::namespace('Api')->group(function () {
     Route::post('loginEmailVerify', [UserController::class, 'loginOtp']);
     Route::post('signup', [UserController::class, 'signup']);
     Route::post('login', [UserController::class, 'login']);
+    Route::get('languages',[LanguageController::class,'index']);
     Route::group(['middleware' => 'auth:api'], function () {
-      Route::post('edit',[UserController::class,'edit']);
-      Route::get('getUser',[UserController::class,'getUser']);
-      Route::get('isColingual',[UserController::class,'isColingual']);
-      Route::get('isVideo',[UserController::class,'isVideo']);
-      Route::get('isAudio',[UserController::class,'isAudio']);
-      Route::get('isChat',[UserController::class,'isChat']);
-      Route::get('languages',[LanguageController::class,'index']);
+        Route::post('edit',[UserController::class,'edit']);
+        Route::get('getUser',[UserController::class,'getUser']);
+        Route::get('isColingual',[UserController::class,'isColingual']);
+        Route::get('isVideo',[UserController::class,'isVideo']);
+        Route::get('isAudio',[UserController::class,'isAudio']);
+        Route::get('isChat',[UserController::class,'isChat']);
     });
 });
