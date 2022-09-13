@@ -112,7 +112,9 @@ class UserController extends AppBaseController
      * @OA\Post(
      *     tags={"Authentication"},
      *     path="/signup",
-     *     description="Signup",
+     *     description="
+     *  Signup
+     *   languages : pass comma seprated like 1,2,3",
      *     summary="Signup",
      *     operationId="signup",
      * @OA\Parameter(
@@ -144,6 +146,10 @@ class UserController extends AppBaseController
      *     ),
      * @OA\Property(
      *     property="mobile_no",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="languages",
      *     type="string"
      *     ),
      * @OA\Property(
@@ -217,7 +223,12 @@ class UserController extends AppBaseController
             if ($validator->fails()) {
                 return response()->json(['status' => false, 'data' => $error, 'message' => implode(', ', $validator->errors()->all())]);
             }
-            $user = $this->userRepository->create($request->all());
+            $input = $request->all();
+            $language = explode(',',$request->languages);
+            $input['primary_language'] = $language[0];
+            array_shift($language);
+            $input['languages'] = implode(',',$language);
+            $user = $this->userRepository->create($input);
             if ($user) {
                 $credentials['mobile_no'] = $user->mobile_no;
                 $credentials['email'] = $user->email;
@@ -412,7 +423,9 @@ class UserController extends AppBaseController
      * @OA\Post(
      *     tags={"User"},
      *     path="/edit",
-     *     description="Edit Profile",
+     *     description="
+     *  Edit Profile
+     *   languages : pass comma seprated like 1,2,3",
      *     summary="Edit Profile",
      *     operationId="edit",
      * @OA\Parameter(
@@ -445,6 +458,10 @@ class UserController extends AppBaseController
      * @OA\Property(
      *     property="image",
      *     type="file"
+     *     ),
+     * @OA\Property(
+     *     property="languages",
+     *     type="string"
      *     ),
      * @OA\Property(
      *     property="card_number",
@@ -511,6 +528,12 @@ class UserController extends AppBaseController
         }
         if (isset($request->email) && $request->email != '') {
             $user->email = $request->email;
+        }
+        if (isset($request->languages) && $request->languages!= ''){
+            $language = explode(',',$request->languages);
+            $user->primary_language = $language[0];
+            array_shift($language);
+            $user->languages = implode(',',$language);
         }
         if ($request->file('image') !== null){
             $file = $request->file('image');

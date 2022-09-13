@@ -36,6 +36,8 @@ class User extends Authenticatable implements HasMedia
         'cvv',
         'country',
         'nickname',
+        'primary_language',
+        'languages',
         'device_token',
         'device_type',
     ];
