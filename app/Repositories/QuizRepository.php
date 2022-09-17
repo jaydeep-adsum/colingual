@@ -2,13 +2,19 @@
 
 namespace App\Repositories;
 
-use App\Models\Language;
+use App\Models\Quiz;
 
-class LanguageRepository extends BaseRepository
+class QuizRepository extends BaseRepository
 {
 
     protected $fieldsSearchable = [
-        'language',
+        'language_id',
+        'question',
+        'A',
+        'B',
+        'C',
+        'D',
+        'answer',
     ];
     public function getFieldsSearchable()
     {
@@ -17,6 +23,6 @@ class LanguageRepository extends BaseRepository
 
     public function model()
     {
-        return Language::class;
+        return Quiz::class;
     }
 }

@@ -14,7 +14,7 @@ class CreateUsersTable extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->string('name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('country_code')->nullable();
@@ -29,8 +29,7 @@ class CreateUsersTable extends Migration
             $table->enum('audio',[0,1]);
             $table->enum('chat',[0,1]);
             $table->enum('login_by',[0,1,2,3,4]);
-            $table->integer('primary_language')->nullable();
-            $table->string('languages')->nullable();
+            $table->unsignedInteger('primary_language')->nullable();
             $table->string('card_number')->nullable();
             $table->string('exp_date')->nullable();
             $table->string('cvv')->nullable();
@@ -40,6 +39,10 @@ class CreateUsersTable extends Migration
             $table->string('device_type')->nullable();
             $table->rememberToken();
             $table->timestamps();
+
+            $table->foreign('primary_language')->references('id')->on('languages')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
         });
     }
 

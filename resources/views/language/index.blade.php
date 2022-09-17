@@ -2,9 +2,6 @@
 @section('title')
     Category
 @endsection
-@section('header')
-    <a href="#" class="btn btn-primary addModal"><i class="fa-solid fa-plus"></i> Add</a>
-@endsection
 @section('content')
     <div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
     </div>
@@ -147,6 +144,9 @@
                         displayErrorMessage(result.responseJSON.message);
                     },
                 });
+            });
+            $('#addModal').on('hidden.bs.modal', function () {
+                $('#addForm')[0].reset();
             });
         });
 

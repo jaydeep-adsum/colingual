@@ -37,10 +37,11 @@ class User extends Authenticatable implements HasMedia
         'country',
         'nickname',
         'primary_language',
-        'languages',
         'device_token',
         'device_type',
     ];
+
+    protected $with = ['language','primary_language'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -69,4 +70,12 @@ class User extends Authenticatable implements HasMedia
 //
 //        return asset('assets/img/employer-image.png');
 //    }
+
+    public function language(){
+        return $this->belongsToMany(Language::class);
+    }
+
+    public function primary_language(){
+        return $this->belongsTo(Language::class,'primary_language');
+    }
 }

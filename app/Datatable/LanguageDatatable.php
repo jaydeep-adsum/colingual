@@ -2,7 +2,7 @@
 
 namespace App\Datatable;
 
-use App\Models\Languages;
+use App\Models\Language;
 
 class LanguageDatatable
 {
@@ -13,7 +13,7 @@ class LanguageDatatable
     public function get($input = [])
     {
         /** @var Languages $query */
-        $query = Languages::query()->select('languages.*');
+        $query = Language::query()->select('languages.*');
 
         return $query;
     }

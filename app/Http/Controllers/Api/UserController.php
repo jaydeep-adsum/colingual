@@ -153,6 +153,10 @@ class UserController extends AppBaseController
      *     type="string"
      *     ),
      * @OA\Property(
+     *     property="colingual",
+     *     type="string"
+     *     ),
+     * @OA\Property(
      *     property="image_url",
      *     type="string"
      *     ),
@@ -227,8 +231,8 @@ class UserController extends AppBaseController
             $language = explode(',',$request->languages);
             $input['primary_language'] = $language[0];
             array_shift($language);
-            $input['languages'] = implode(',',$language);
             $user = $this->userRepository->create($input);
+            $user->language()->attach($language);
             if ($user) {
                 $credentials['mobile_no'] = $user->mobile_no;
                 $credentials['email'] = $user->email;

@@ -86,6 +86,11 @@
                         <i class="fas fa-language"></i>{{ __('Languages') }}
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{Request::is('quiz*')?'active':''}}" href="{{ route('quiz') }}">
+                        <i class="fas fa-stopwatch"></i>{{ __('Quiz') }}
+                    </a>
+                </li>
             </ul>
         </div>
     </div>

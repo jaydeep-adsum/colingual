@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Languages extends Model
+class Language extends Model
 {
     use HasFactory;
 
@@ -14,4 +14,8 @@ class Languages extends Model
     ];
 
     protected $table="languages";
+
+    public function users(){
+        return $this->belongsToMany(User::class);
+    }
 }
