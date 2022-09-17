@@ -537,7 +537,7 @@ class UserController extends AppBaseController
             $language = explode(',',$request->languages);
             $user->primary_language = $language[0];
             array_shift($language);
-            $user->language()->attach($language);
+            $user->language()->sync($language);
         }
         if ($request->file('image') !== null){
             $file = $request->file('image');
