@@ -8,7 +8,6 @@ use App\Models\Quiz;
 use App\Repositories\QuizRepository;
 use Datatables;
 use Exception;
-use Flash;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -59,8 +58,6 @@ class QuizController extends AppBaseController
     public function store(Request $request){
         $this->quizRepository->create($request->all());
 
-        Flash::success('Quiz added successfully.');
-
         return redirect(route('quiz'));
     }
 
@@ -84,8 +81,6 @@ class QuizController extends AppBaseController
     public function update(Request $request, $id)
     {
         $this->quizRepository->update($request->all(), $id);
-
-        Flash::success('Quiz updated successfully.');
 
         return redirect(route('quiz'));
     }

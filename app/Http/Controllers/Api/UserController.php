@@ -561,9 +561,10 @@ class UserController extends AppBaseController
             $user->nickname = $request->nickname;
         }
         $user->save();
+        $userData = Auth::user();
 
         return $this->sendResponse(
-            $user, 'User profile updated Successfully.'
+            $userData, 'User profile updated Successfully.'
         );
     }
 
