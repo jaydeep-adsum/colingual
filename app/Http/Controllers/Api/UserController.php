@@ -561,7 +561,7 @@ class UserController extends AppBaseController
             $user->nickname = $request->nickname;
         }
         $user->save();
-        $userData = Auth::user();
+        $userData = User::find($user->id);
 
         return $this->sendResponse(
             $userData, 'User profile updated Successfully.'
