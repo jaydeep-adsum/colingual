@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use Auth;
 use Carbon\Carbon;
+use DB;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

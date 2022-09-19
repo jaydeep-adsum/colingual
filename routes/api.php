@@ -32,5 +32,6 @@ Route::namespace('Api')->group(function () {
         Route::get('isAudio',[UserController::class,'isAudio']);
         Route::get('isChat',[UserController::class,'isChat']);
         Route::post('quiz',[QuizController::class,'index']);
+        Route::post('quiz_result',[QuizController::class,'quizResult']);
     });
 });

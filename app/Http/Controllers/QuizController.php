@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Datatable\QuizDatatable;
 use App\Models\Language;
 use App\Models\Quiz;
+use App\Models\User;
 use App\Repositories\QuizRepository;
 use Datatables;
 use Exception;

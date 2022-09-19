@@ -30,7 +30,6 @@
                                 <thead class="thead-light">
                                 <tr>
                                     <th scope="col">{{__('Language')}}</th>
-                                    <th scope="col">{{__('Question')}}</th>
                                     <th scope="col">{{__('Action')}}</th>
                                 </tr>
                                 </thead>
@@ -66,10 +65,6 @@
                             return row.language.language
                         },
                         name: 'language_id'
-                    },
-                    {
-                        data : 'question',
-                        name : 'question'
                     },
                     {
                         data: function data(row) {
