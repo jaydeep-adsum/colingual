@@ -910,7 +910,7 @@ class UserController extends AppBaseController
      *
      * @OA\Post(
      *     tags={"User"},
-     *     path="/add_remove_favourite",
+     *     path="/add_remove_favourite_rating",
      *     description="
                user_id = not logged in user
                like = 0 or 1",
@@ -933,67 +933,6 @@ class UserController extends AppBaseController
      *     ),
      * @OA\Property(
      *     property="like",
-     *     type="integer"
-     *     ),
-     *    )
-     *   ),
-     *  ),
-     * @OA\Response(
-     *     response=200,
-     *     description="User response",@OA\JsonContent
-     *     (ref="#/components/schemas/SuccessResponse")
-     * ),
-     * @OA\Response(
-     *     response="400",
-     *     description="Validation error",@OA\JsonContent
-     *     (ref="#/components/schemas/ErrorResponse")
-     * ),
-     * @OA\Response(
-     *     response="403",
-     *     description="Not Authorized Invalid or missing Authorization header",@OA\
-     *     JsonContent(ref="#/components/schemas/ErrorResponse")
-     * ),
-     * @OA\Response(
-     *     response=500,
-     *     description="Unexpected error",@OA\JsonContent
-     *     (ref="#/components/schemas/ErrorResponse")
-     * ),
-     * security={
-     *     {"API-Key": {}}
-     * }
-     * )
-     */
-    public function addToFavourite(Request $request){
-        $user = Auth::user();
-        $user->likedUsers()->updateExistingPivot($request->user_id, ['like'=>$request->like]);
-
-        return $this->sendResponse($user, 'User add to favourite Successfully.'
-        );
-    }
-
-    /**
-     * Swagger defination Get Order
-     *
-     * @OA\Post(
-     *     tags={"User"},
-     *     path="/add_rating",
-     *     description="
-                user_id = not logged in user",
-     *     summary="Add Rating",
-     *     operationId="addRating",
-     * @OA\Parameter(
-     *     name="Content-Language",
-     *     in="header",
-     *     description="Content-Language",
-     *     required=false,@OA\Schema(type="string")
-     *     ),
-     * @OA\RequestBody(
-     *     required=true,
-     * @OA\MediaType(
-     *     mediaType="multipart/form-data",
-     * @OA\JsonContent(
-     * @OA\Property(
-     *     property="user_id",
      *     type="integer"
      *     ),
      * @OA\Property(
@@ -1028,11 +967,17 @@ class UserController extends AppBaseController
      * }
      * )
      */
-    public function addRating(Request $request){
+    public function addToFavourite(Request $request){
         $user = Auth::user();
-        $user->likedUsers()->updateExistingPivot($request->user_id, ['rating'=>$request->rating]);
+        if ($request->like) {
+            $user->likedUsers()->updateExistingPivot($request->user_id, ['like' => $request->like]);
+        }
+        if ($request->rating) {
+            $user->likedUsers()->updateExistingPivot($request->user_id, ['rating' => $request->rating]);
+        }
+        $user = User::find(Auth::id());
 
-        return $this->sendResponse($user, 'User rating added Successfully.'
+        return $this->sendResponse($user, 'User Success.'
         );
     }
 }

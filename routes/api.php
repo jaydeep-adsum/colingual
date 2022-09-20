@@ -33,7 +33,6 @@ Route::namespace('Api')->group(function () {
         Route::get('isChat',[UserController::class,'isChat']);
         Route::post('quiz',[QuizController::class,'index']);
         Route::post('isTranslator',[UserController::class,'isTranslator']);
-        Route::post('add_remove_favourite',[UserController::class,'addToFavourite']);
-        Route::post('add_rating',[UserController::class,'addRating']);
+        Route::post('add_remove_favourite_rating',[UserController::class,'addToFavourite']);
     });
 });
