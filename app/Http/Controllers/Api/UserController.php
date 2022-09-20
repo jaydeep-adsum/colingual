@@ -840,4 +840,199 @@ class UserController extends AppBaseController
             $user, 'User profile updated Successfully.'
         );
     }
+
+    /**
+     * Swagger defination Get Order
+     *
+     * @OA\Post(
+     *     tags={"User"},
+     *     path="/isTranslator",
+     *     description="Make Translator",
+     *     summary="Make Translator",
+     *     operationId="makeTranslator",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\RequestBody(
+     *     required=true,
+     * @OA\MediaType(
+     *     mediaType="multipart/form-data",
+     * @OA\JsonContent(
+     * @OA\Property(
+     *     property="language_id",
+     *     type="integer"
+     *     ),
+     * @OA\Property(
+     *     property="translator",
+     *     type="integer"
+     *     ),
+     *    )
+     *   ),
+     *  ),
+     * @OA\Response(
+     *     response=200,
+     *     description="User response",@OA\JsonContent
+     *     (ref="#/components/schemas/SuccessResponse")
+     * ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="403",
+     *     description="Not Authorized Invalid or missing Authorization header",@OA\
+     *     JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function isTranslator(Request $request){
+        $user = Auth::user();
+        $user->language()->updateExistingPivot($request->language_id, ['translator'=>$request->translator]);
+
+        return $this->sendResponse($user, 'User makes translator Successfully.'
+        );
+    }
+
+    /**
+     * Swagger defination Get Order
+     *
+     * @OA\Post(
+     *     tags={"User"},
+     *     path="/add_remove_favourite",
+     *     description="
+               user_id = not logged in user
+               like = 0 or 1",
+     *     summary="Add or remove to favourite",
+     *     operationId="addRemoveFavourite",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\RequestBody(
+     *     required=true,
+     * @OA\MediaType(
+     *     mediaType="multipart/form-data",
+     * @OA\JsonContent(
+     * @OA\Property(
+     *     property="user_id",
+     *     type="integer"
+     *     ),
+     * @OA\Property(
+     *     property="like",
+     *     type="integer"
+     *     ),
+     *    )
+     *   ),
+     *  ),
+     * @OA\Response(
+     *     response=200,
+     *     description="User response",@OA\JsonContent
+     *     (ref="#/components/schemas/SuccessResponse")
+     * ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="403",
+     *     description="Not Authorized Invalid or missing Authorization header",@OA\
+     *     JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function addToFavourite(Request $request){
+        $user = Auth::user();
+        $user->likedUsers()->updateExistingPivot($request->user_id, ['like'=>$request->like]);
+
+        return $this->sendResponse($user, 'User add to favourite Successfully.'
+        );
+    }
+
+    /**
+     * Swagger defination Get Order
+     *
+     * @OA\Post(
+     *     tags={"User"},
+     *     path="/add_rating",
+     *     description="
+                user_id = not logged in user",
+     *     summary="Add Rating",
+     *     operationId="addRating",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\RequestBody(
+     *     required=true,
+     * @OA\MediaType(
+     *     mediaType="multipart/form-data",
+     * @OA\JsonContent(
+     * @OA\Property(
+     *     property="user_id",
+     *     type="integer"
+     *     ),
+     * @OA\Property(
+     *     property="rating",
+     *     type="string"
+     *     ),
+     *    )
+     *   ),
+     *  ),
+     * @OA\Response(
+     *     response=200,
+     *     description="User response",@OA\JsonContent
+     *     (ref="#/components/schemas/SuccessResponse")
+     * ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="403",
+     *     description="Not Authorized Invalid or missing Authorization header",@OA\
+     *     JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function addRating(Request $request){
+        $user = Auth::user();
+        $user->likedUsers()->updateExistingPivot($request->user_id, ['rating'=>$request->rating]);
+
+        return $this->sendResponse($user, 'User rating added Successfully.'
+        );
+    }
 }

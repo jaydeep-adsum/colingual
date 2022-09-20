@@ -24,6 +24,7 @@
                             <table class="table table-flush" id="language">
                                 <thead class="thead-light">
                                 <tr>
+                                    <th scope="col">{{__('ID')}}</th>
                                     <th scope="col">{{__('Language')}}</th>
                                     <th scope="col">{{__('Action')}}</th>
                                 </tr>
@@ -51,6 +52,7 @@
                 ajax: {
                     url: languageUrl,
                 },
+                order:[0,'DESC'],
                 "language": {
                     "paginate": {
                         "previous": "<i class='fas fa-chevron-left'></i>",
@@ -58,6 +60,10 @@
                     }
                 },
                 columns: [
+                    {
+                        data: 'id',
+                        name: 'id'
+                    },
                     {
                         data: 'language',
                         name: 'language'

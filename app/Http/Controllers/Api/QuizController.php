@@ -115,17 +115,4 @@ class QuizController extends AppBaseController
             $data, 'Quiz get Successfully.'
         );
     }
-
-    public function quizResult(Request $request){
-        $score = DB::table('quiz_user')->insert([
-            'quiz_id'=>$request->quiz_id,
-            'user_id'=>\Auth::id(),
-            'is_translator'=>$request->is_translator,
-            'score'=>$request->score,
-        ]);
-        if($score){
-            return $this->sendSuccess('Quiz result stored.');
-        }
-        return $this->sendError('Quiz result not stored');
-    }
 }
