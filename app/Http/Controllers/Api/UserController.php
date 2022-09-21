@@ -905,11 +905,6 @@ class UserController extends AppBaseController
         );
     }
 
-
-
-
-
-
     /**
      * Swagger defination Get Order
      *
@@ -983,7 +978,55 @@ class UserController extends AppBaseController
         }
         $user = User::find(Auth::id());
 
-        return $this->sendResponse($user, 'User Success.'
-        );
+        return $this->sendResponse($user, 'User Success.');
+    }
+
+    /**
+     * Swagger definition for Products
+     *
+     * @OA\Get(
+     *     tags={"User"},
+     *     path="/getUserList",
+     *     description="Get all Users",
+     *     summary="Get all User",
+     *     operationId="getAllUser",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\Response(
+     *     response=200,
+     *     description="Succuess response"
+     *     ,@OA\JsonContent(ref="#/components/schemas/SuccessResponse")
+     *     ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="401",
+     *     description="Not Authorized Invalid or missing Authorization header"
+     *     ,@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *  ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function getUsers(){
+        $users = User::where('role','0')->get();
+        if($users){
+            return $this->sendResponse($users, 'Users get Successfully.');
+        }
+        return $this->sendError( 'User not found.');
     }
 }

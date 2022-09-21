@@ -34,5 +34,6 @@ Route::namespace('Api')->group(function () {
         Route::post('quiz',[QuizController::class,'index']);
         Route::post('isTranslator',[UserController::class,'isTranslator']);
         Route::post('add_remove_favourite_rating',[UserController::class,'addToFavourite']);
+        Route::get('getUserList',[UserController::class,'getUsers']);
     });
 });
