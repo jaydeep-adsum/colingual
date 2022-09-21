@@ -915,7 +915,7 @@ class UserController extends AppBaseController
      *
      * @OA\Post(
      *     tags={"User"},
-     *     path="/add_remove_favourite",
+     *     path="/add_remove_favourite_rating",
      *     description="
     user_id = not logged in user
     like = 0 or 1",
