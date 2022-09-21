@@ -1023,7 +1023,7 @@ class UserController extends AppBaseController
      * )
      */
     public function getUsers(){
-        $users = User::where('role','0')->get();
+        $users = User::where('role','0')->withcount('likeUsers')->get();
         if($users){
             return $this->sendResponse($users, 'Users get Successfully.');
         }
