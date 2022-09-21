@@ -905,15 +905,20 @@ class UserController extends AppBaseController
         );
     }
 
+
+
+
+
+
     /**
      * Swagger defination Get Order
      *
      * @OA\Post(
      *     tags={"User"},
-     *     path="/add_remove_favourite_rating",
+     *     path="/add_remove_favourite",
      *     description="
-               user_id = not logged in user
-               like = 0 or 1",
+    user_id = not logged in user
+    like = 0 or 1",
      *     summary="Add or remove to favourite",
      *     operationId="addRemoveFavourite",
      * @OA\Parameter(
@@ -969,7 +974,8 @@ class UserController extends AppBaseController
      */
     public function addToFavourite(Request $request){
         $user = Auth::user();
-        if ($request->like) {
+        $user->likedUsers()->sync($request->user_id);
+        if ($request->like==1||$request->like==0) {
             $user->likedUsers()->updateExistingPivot($request->user_id, ['like' => $request->like]);
         }
         if ($request->rating) {

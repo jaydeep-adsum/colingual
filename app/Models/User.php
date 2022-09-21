@@ -93,6 +93,6 @@ class User extends Authenticatable implements HasMedia
      */
     public function likedUsers()
     {
-        return $this->belongsToMany(User::class,'user_likes','user_id','liked_user_id')->withPivot('like','rating');
+        return $this->belongsToMany(User::class,'user_likes','user_id','liked_user_id')->withPivot('like');
     }
 }

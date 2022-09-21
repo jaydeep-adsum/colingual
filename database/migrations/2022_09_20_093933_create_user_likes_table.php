@@ -17,7 +17,7 @@ class CreateUserLikesTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('liked_user_id');
-            $table->enum('like',[0,1]);
+            $table->enum('like',[0,1])->default(0)->nullable();
             $table->string('rating')->nullable();
             $table->timestamps();
 
