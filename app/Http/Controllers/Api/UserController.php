@@ -942,7 +942,7 @@ class UserController extends AppBaseController
      *     ),
      * @OA\Property(
      *     property="rating",
-     *     type="string"
+     *     type="number"
      *     ),
      *    )
      *   ),
@@ -1035,25 +1035,58 @@ class UserController extends AppBaseController
         }])->get();
         $data = [];
         foreach($users as $user){
-            $is_like = false;
-            foreach($user->likeUsers as $likeUser){
-                if($likeUser->pivot->user_id===Auth::id() && $likeUser->pivot->like=="1"){
-                    $is_like = true;
+            if($user->id!=Auth::id()) {
+                $is_like = false;
+                $star_1 = 0;
+                $star_2 = 0;
+                $star_3 = 0;
+                $star_4 = 0;
+                $star_5 = 0;
+                $i = 0;
+                foreach ($user->likeUsers as $likeUser) {
+                    if($likeUser->pivot->rating==1){
+                        $i++;
+                        $star_1+=1;
+                    }
+                    if($likeUser->pivot->rating==2){
+                        $i++;
+                        $star_2+=1;
+                    }
+                    if($likeUser->pivot->rating==3){
+                        $i++;
+                        $star_3+=1;
+                    }
+                    if($likeUser->pivot->rating==4){
+                        $i++;
+                        $star_4+=1;
+                    }
+                    if($likeUser->pivot->rating==5){
+                        $i++;
+                        $star_5+=1;
+                    }
+                    if ($likeUser->pivot->user_id === Auth::id() && $likeUser->pivot->like == "1") {
+                        $is_like = true;
+                    }
                 }
+                $average_rating = 0;
+            if ($i>0) {
+                $average_rating = (1 * $star_1 + 2 * $star_2 + 3 * $star_3 + 4 * $star_4 + 5 * $star_5) / $i;
             }
-            $data[] = [
-                'id'=>$user->id,
-                'name'=>$user->name,
-                'last_name'=>$user->last_name,
-                'image_url'=>$user->image_url,
-                'is_like'=>$is_like,
-                'colingual'=>$user->colingual,
-                'video'=>$user->video,
-                'audio'=>$user->audio,
-                'chat'=>$user->chat,
-                'like_users_count'=>$user->like_users_count,
-                'language'=>$user->language,
-            ];
+                $data[] = [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'last_name' => $user->last_name,
+                    'image_url' => $user->image_url,
+                    'is_like' => $is_like,
+                    'rating' => $average_rating,
+                    'colingual' => $user->colingual,
+                    'video' => $user->video,
+                    'audio' => $user->audio,
+                    'chat' => $user->chat,
+                    'like_users_count' => $user->like_users_count,
+                    'language' => $user->language,
+                ];
+            }
         }
         if($data){
             return $this->sendResponse($data, 'Users get Successfully.');
