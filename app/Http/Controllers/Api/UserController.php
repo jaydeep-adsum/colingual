@@ -1078,7 +1078,7 @@ class UserController extends AppBaseController
                     'last_name' => $user->last_name,
                     'image_url' => $user->image_url,
                     'is_like' => $is_like,
-                    'rating' => $average_rating,
+                    'rating' => (string)$average_rating,
                     'colingual' => $user->colingual,
                     'video' => $user->video,
                     'audio' => $user->audio,
