@@ -18,8 +18,6 @@ class UserRepository extends BaseRepository
         'colingual',
         'translator',
         'image_url',
-        'primary_language',
-        'languages',
         'login_by',
         'card_number',
         'exp_date',

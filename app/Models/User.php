@@ -39,12 +39,11 @@ class User extends Authenticatable implements HasMedia
         'cvv',
         'country',
         'nickname',
-        'primary_language',
         'device_token',
         'device_type',
     ];
 
-    protected $with = ['language','primaryLanguage'];
+    protected $with = ['language'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -78,7 +77,7 @@ class User extends Authenticatable implements HasMedia
      * @return BelongsToMany
      */
     public function language(){
-        return $this->belongsToMany(Language::class)->withPivot('translator');
+        return $this->belongsToMany(Language::class)->withPivot('translator','is_primary');
     }
 
     /**

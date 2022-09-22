@@ -18,6 +18,7 @@ class CreateLanguageUserTable extends Migration
             $table->unsignedInteger('language_id');
             $table->unsignedInteger('user_id');
             $table->enum('translator',[0,1]);
+            $table->enum('is_primary',[0,1])->default(0)->nullable();
 
             $table->foreign('language_id')->references('id')->on('languages')
                 ->onUpdate('cascade')

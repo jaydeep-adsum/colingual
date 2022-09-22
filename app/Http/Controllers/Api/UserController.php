@@ -229,10 +229,12 @@ class UserController extends AppBaseController
                 return response()->json(['status' => false, 'data' => $error, 'message' => implode(', ', $validator->errors()->all())]);
             }
             $input = $request->all();
-            $language = explode(',',$request->languages);
-            $input['primary_language'] = $language[0];
-            array_shift($language);
+
             $user = $this->userRepository->create($input);
+            $language = explode(',',$request->languages);
+            $user->language()->attach($language[0]);
+            $user->language()->updateExistingPivot($language[0], ['is_primary' => '1']);
+            array_shift($language);
             $user->language()->attach($language);
             if ($user) {
                 $credentials['mobile_no'] = $user->mobile_no;
