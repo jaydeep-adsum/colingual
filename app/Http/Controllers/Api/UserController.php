@@ -969,7 +969,7 @@ class UserController extends AppBaseController
      */
     public function addToFavourite(Request $request){
         $user = Auth::user();
-        $user->likedUsers()->sync($request->user_id);
+        $user->likedUsers()->attach($request->user_id);
         if ($request->like==1||$request->like==0) {
             $user->likedUsers()->updateExistingPivot($request->user_id, ['like' => $request->like]);
         }
@@ -1036,6 +1036,7 @@ class UserController extends AppBaseController
                 'id'=>$user->id,
                 'name'=>$user->name,
                 'last_name'=>$user->last_name,
+                'image_url'=>$user->image_url,
                 'is_like'=>$is_like,
                 'colingual'=>$user->colingual,
                 'video'=>$user->video,
