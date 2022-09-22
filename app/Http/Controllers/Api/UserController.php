@@ -1025,7 +1025,9 @@ class UserController extends AppBaseController
      * )
      */
     public function getUsers(){
-        $users = User::where('role','0')->with('likeUsers')->withcount('likeUsers')->get();
+        $users = User::where('role','0')->with('likeUsers')->withcount(['likeUsers' => function($query) {
+            $query->where('like','1');
+        }])->get();
         $data = [];
         foreach($users as $user){
             $is_like = false;
