@@ -1030,7 +1030,7 @@ class UserController extends AppBaseController
         foreach($users as $user){
             $is_like = false;
             foreach($user->likeUsers as $likeUser){
-                if($likeUser->pivot->user_id===Auth::id()){
+                if($likeUser->pivot->user_id===Auth::id() && $likeUser->pivot->like=="1"){
                     $is_like = true;
                 }
             }
