@@ -538,9 +538,12 @@ class UserController extends AppBaseController
         }
         if (isset($request->languages) && $request->languages!= ''){
             $language = explode(',',$request->languages);
-            $user->primary_language = $language[0];
+            $user->language()->detach();
+            $user->language()->attach($language[0]);
+            $user->language()->updateExistingPivot($language[0], ['is_primary' => '1']);
             array_shift($language);
-            $user->language()->sync($language);
+            $user->language()->attach($language);
+            $user->language()->updateExistingPivot($language, ['is_primary' => '0']);
         }
         if ($request->file('image') !== null){
             $file = $request->file('image');
@@ -1049,7 +1052,6 @@ class UserController extends AppBaseController
                 'audio'=>$user->audio,
                 'chat'=>$user->chat,
                 'like_users_count'=>$user->like_users_count,
-                'primary_language'=>$user->primaryLanguage,
                 'language'=>$user->language,
             ];
         }
