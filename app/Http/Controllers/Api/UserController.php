@@ -969,7 +969,9 @@ class UserController extends AppBaseController
      */
     public function addToFavourite(Request $request){
         $user = Auth::user();
-        $user->likedUsers()->attach($request->user_id);
+        if($user->likedUsers()->where('liked_user_id',$request->user_id)->doesntExist()){
+            $user->likedUsers()->attach($request->user_id);
+        }
         if ($request->like==1||$request->like==0) {
             $user->likedUsers()->updateExistingPivot($request->user_id, ['like' => $request->like]);
         }
