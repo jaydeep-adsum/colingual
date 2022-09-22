@@ -1023,9 +1023,31 @@ class UserController extends AppBaseController
      * )
      */
     public function getUsers(){
-        $users = User::where('role','0')->withcount('likeUsers')->get();
-        if($users){
-            return $this->sendResponse($users, 'Users get Successfully.');
+        $users = User::where('role','0')->with('likeUsers')->withcount('likeUsers')->get();
+        $data = [];
+        foreach($users as $user){
+            $is_like = false;
+            foreach($user->likeUsers as $likeUser){
+                if($likeUser->pivot->user_id===Auth::id()){
+                    $is_like = true;
+                }
+            }
+            $data[] = [
+                'id'=>$user->id,
+                'name'=>$user->name,
+                'last_name'=>$user->last_name,
+                'is_like'=>$is_like,
+                'colingual'=>$user->colingual,
+                'video'=>$user->video,
+                'audio'=>$user->audio,
+                'chat'=>$user->chat,
+                'like_users_count'=>$user->like_users_count,
+                'primary_language'=>$user->primaryLanguage,
+                'language'=>$user->language,
+            ];
+        }
+        if($data){
+            return $this->sendResponse($data, 'Users get Successfully.');
         }
         return $this->sendError( 'User not found.');
     }

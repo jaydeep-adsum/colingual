@@ -44,7 +44,7 @@ class User extends Authenticatable implements HasMedia
         'device_type',
     ];
 
-    protected $with = ['language','primary_language'];
+    protected $with = ['language','primaryLanguage'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -84,7 +84,7 @@ class User extends Authenticatable implements HasMedia
     /**
      * @return BelongsTo
      */
-    public function primary_language(){
+    public function primaryLanguage(){
         return $this->belongsTo(Language::class,'primary_language');
     }
 
