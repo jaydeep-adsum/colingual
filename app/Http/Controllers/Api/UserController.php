@@ -1316,6 +1316,7 @@ class UserController extends AppBaseController
                         'rating' => (string)$average_rating,
                         'colingual' => $user->colingual,
                         'video' => $user->video,
+                        'is_verified'=> "1",
                         'audio' => $user->audio,
                         'chat' => $user->chat,
                         'is_available' => $user->is_available,
