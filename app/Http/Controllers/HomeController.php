@@ -35,7 +35,8 @@ class HomeController extends Controller
         FROM `users`
         LEFT JOIN `user_likes` on `users`.`id` = `user_likes`.`user_id`
         WHERE `role`='0'
-        order by total_like desc ");
+        GROUP BY `user_likes`.`user_id`
+        order by total_like desc");
 
         $data = [];
         foreach($users as $user){
@@ -63,22 +64,33 @@ class HomeController extends Controller
                 if ($i>0) {
                     $average_rating = (1 * $user->total_rate_1 + 2 * $user->total_rate_2 + 3 * $user->total_rate_3 + 4 * $user->total_rate_4 + 5 * $user->total_rate_5) / $i;
                 }
-                $language = DB::select("SELECT * FROM `language_user` JOIN languages on language_user.language_id=languages.id where user_id='.$user->userID.'");
-                $data[] = [
-                    'id' => $user->userID,
-                    'name' => $user->name,
-                    'last_name' => $user->last_name,
-                    'image_url' => $user->image_url,
-                    'is_like' => $is_like,
-                    'rating' => (string)$average_rating,
-                    'colingual' => $user->colingual,
-                    'video' => $user->video,
-                    'audio' => $user->audio,
-                    'chat' => $user->chat,
-                    'like_users_count' => $user->total_like,
-                    'language' => $language,
-                ];
+                $languages = DB::select("SELECT * FROM `language_user` JOIN languages on language_user.language_id=languages.id where user_id='.$user->userID.'");
+                $j=0;
+                foreach($languages as $language){
+                    if($language->translator=='1'){
+                        $j++;
+                    }
+                }
+
+                if($j==count($languages)){
+                    $data[] = [
+                        'id' => $user->userID,
+                        'name' => $user->name,
+                        'last_name' => $user->last_name,
+                        'image_url' => $user->image_url,
+                        'is_like' => $is_like,
+                        'rating' => (string)$average_rating,
+                        'colingual' => $user->colingual,
+                        'video' => $user->video,
+                        'audio' => $user->audio,
+                        'chat' => $user->chat,
+                        'like_users_count' => $user->total_like,
+                        'language' => $languages,
+                    ];
+                }
+
             }
+
         $data['users'] = User::where('role','0')->get()->count();
 
         return view('dashboard',compact('data'));

@@ -31,6 +31,7 @@ class User extends Authenticatable implements HasMedia
         'country_code',
         'role',
         'colingual',
+        'is_available',
         'translator',
         'login_by',
         'image_url',

@@ -847,6 +847,61 @@ class UserController extends AppBaseController
     }
 
     /**
+     * Swagger definition for Products
+     *
+     * @OA\Get(
+     *     tags={"User"},
+     *     path="/isAvailable",
+     *     description="Available",
+     *     summary="Available ",
+     *     operationId="isAvailable",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\Response(
+     *     response=200,
+     *     description="Succuess response"
+     *     ,@OA\JsonContent(ref="#/components/schemas/SuccessResponse")
+     *     ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="401",
+     *     description="Not Authorized Invalid or missing Authorization header"
+     *     ,@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *  ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function isAvailable(){
+        $user = Auth::user();
+        if($user->is_available=='0'){
+            $user->is_available = '1';
+        } else{
+            $user->is_available = '0';
+        }
+        $user->save();
+
+        return $this->sendResponse(
+            $user, 'User profile updated Successfully.'
+        );
+    }
+
+    /**
      * Swagger defination Get Order
      *
      * @OA\Post(
@@ -1083,6 +1138,7 @@ class UserController extends AppBaseController
                     'video' => $user->video,
                     'audio' => $user->audio,
                     'chat' => $user->chat,
+                    'is_available' => $user->is_available,
                     'like_users_count' => $user->like_users_count,
                     'language' => $user->language,
                 ];
@@ -1092,5 +1148,120 @@ class UserController extends AppBaseController
             return $this->sendResponse($data, 'Users get Successfully.');
         }
         return $this->sendError( 'User not found.');
+    }
+
+    /**
+     * Swagger definition for Products
+     *
+     * @OA\Get(
+     *     tags={"User"},
+     *     path="/getTranslatorList",
+     *     description="Get Translator Users",
+     *     summary="Get Translator User",
+     *     operationId="getTranslatorUser",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\Response(
+     *     response=200,
+     *     description="Succuess response"
+     *     ,@OA\JsonContent(ref="#/components/schemas/SuccessResponse")
+     *     ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="401",
+     *     description="Not Authorized Invalid or missing Authorization header"
+     *     ,@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *  ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function getTranslatorUser(){
+        $users = DB::select("SELECT *,users.id as userID,
+       (SELECT count(rating) from user_likes where user_likes.liked_user_id = users.id AND `rating`=1) as total_rate_1,
+       (SELECT count(rating) from user_likes where user_likes.liked_user_id = users.id AND `rating`=2) as total_rate_2,
+       (SELECT count(rating) from user_likes where user_likes.liked_user_id = users.id AND `rating`=3) as total_rate_3,
+       (SELECT count(rating) from user_likes where user_likes.liked_user_id = users.id AND `rating`=4) as total_rate_4,
+       (SELECT count(rating) from user_likes where user_likes.liked_user_id = users.id AND `rating`=5) as total_rate_5,
+       (SELECT COUNT(`like`) as total_like from user_likes where user_likes.liked_user_id = users.id AND `like`='1') as total_like
+        FROM `users`
+        LEFT JOIN `user_likes` on `users`.`id` = `user_likes`.`user_id`
+        WHERE `role`='0'
+        GROUP BY `user_likes`.`user_id`
+        order by total_like desc");
+
+        $data = [];
+        $is_like = false;
+        foreach($users as $user){
+            if($user->id!=Auth::id()) {
+                $i = 0;
+                if ($user->total_rate_1 > 0) {
+                    $i++;
+                }
+                if ($user->total_rate_2 > 0) {
+                    $i++;
+                }
+                if ($user->total_rate_3 > 0) {
+                    $i++;
+                }
+                if ($user->total_rate_4 > 0) {
+                    $i++;
+                }
+                if ($user->total_rate_5 > 0) {
+                    $i++;
+                }
+                if ($user->user_id === Auth::id() && $user->like == "1") {
+                    $is_like = true;
+                }
+                $average_rating = 0;
+                if ($i > 0) {
+                    $average_rating = (1 * $user->total_rate_1 + 2 * $user->total_rate_2 + 3 * $user->total_rate_3 + 4 * $user->total_rate_4 + 5 * $user->total_rate_5) / $i;
+                }
+                $languages = DB::select("SELECT * FROM `language_user` JOIN languages on language_user.language_id=languages.id where user_id='.$user->userID.'");
+                $j = 0;
+                foreach ($languages as $language) {
+                    if ($language->translator == '1') {
+                        $j++;
+                    }
+                }
+
+                if ($j == count($languages)) {
+                    $data[] = [
+                        'id' => $user->userID,
+                        'name' => $user->name,
+                        'last_name' => $user->last_name,
+                        'image_url' => $user->image_url,
+                        'is_like' => $is_like,
+                        'rating' => (string)$average_rating,
+                        'colingual' => $user->colingual,
+                        'video' => $user->video,
+                        'audio' => $user->audio,
+                        'chat' => $user->chat,
+                        'is_available' => $user->is_available,
+                        'like_users_count' => $user->total_like,
+                        'language' => $languages,
+                    ];
+                }
+            }
+        }
+        if($data){
+            return $this->sendResponse($data, 'Translators Successfully.');
+        }
+        return $this->sendError( 'Translator not found.');
     }
 }
