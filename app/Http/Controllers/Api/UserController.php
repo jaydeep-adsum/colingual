@@ -1274,7 +1274,7 @@ class UserController extends AppBaseController
         $data = [];
         $is_like = false;
         foreach ($users as $user) {
-            if ($user->id != Auth::id()) {
+            if ($user->userID != Auth::id()) {
                 $i = 0;
                 if ($user->total_rate_1 > 0) {
                     $i++;
