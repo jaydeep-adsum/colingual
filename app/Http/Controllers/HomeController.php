@@ -34,8 +34,9 @@ class HomeController extends Controller
        (SELECT COUNT(`like`) as total_like from user_likes where user_likes.liked_user_id = users.id AND `like`='1') as total_like
         FROM `users`
         LEFT JOIN `user_likes` on `users`.`id` = `user_likes`.`user_id`
-        WHERE `role`='0'");
-//        dd($users);
+        WHERE `role`='0'
+        order by total_like desc ");
+
         $data = [];
         foreach($users as $user){
                 $is_like = false;
