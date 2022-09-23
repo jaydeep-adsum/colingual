@@ -31,7 +31,7 @@ Route::namespace('Api')->group(function () {
         Route::get('isVideo',[UserController::class,'isVideo']);
         Route::get('isAudio',[UserController::class,'isAudio']);
         Route::get('isChat',[UserController::class,'isChat']);
-        Route::get('isAvailable',[UserController::class,'isAvailable']);
+        Route::post('isAvailable',[UserController::class,'isAvailable']);
         Route::post('quiz',[QuizController::class,'index']);
         Route::post('isTranslator',[UserController::class,'isTranslator']);
         Route::post('add_remove_favourite_rating',[UserController::class,'addToFavourite']);

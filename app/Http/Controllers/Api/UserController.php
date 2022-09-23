@@ -617,7 +617,8 @@ class UserController extends AppBaseController
      */
     public function getUser()
     {
-        $user = Auth::user();
+        $user = User::where('id',Auth::id())->with('likedUsers')->get();
+        dd($user);
         if (is_null($user)) {
             return $this->sendError('unauthorized');
         }
@@ -847,13 +848,13 @@ class UserController extends AppBaseController
     }
 
     /**
-     * Swagger definition for Products
+     * Swagger defination Get Order
      *
-     * @OA\Get(
+     * @OA\Post(
      *     tags={"User"},
      *     path="/isAvailable",
      *     description="Available",
-     *     summary="Available ",
+     *     summary="Available",
      *     operationId="isAvailable",
      * @OA\Parameter(
      *     name="Content-Language",
@@ -861,39 +862,46 @@ class UserController extends AppBaseController
      *     description="Content-Language",
      *     required=false,@OA\Schema(type="string")
      *     ),
+     * @OA\RequestBody(
+     *     required=true,
+     * @OA\MediaType(
+     *     mediaType="multipart/form-data",
+     * @OA\JsonContent(
+     * @OA\Property(
+     *     property="is_available",
+     *     type="integer"
+     *     ),
+     *    )
+     *   ),
+     *  ),
      * @OA\Response(
      *     response=200,
-     *     description="Succuess response"
-     *     ,@OA\JsonContent(ref="#/components/schemas/SuccessResponse")
-     *     ),
-     * @OA\Response(
-     *     response="400",
-     *     description="Validation error"
-     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     description="User response",@OA\JsonContent
+     *     (ref="#/components/schemas/SuccessResponse")
      * ),
      * @OA\Response(
-     *     response="401",
-     *     description="Not Authorized Invalid or missing Authorization header"
-     *     ,@OA\JsonContent
+     *     response="400",
+     *     description="Validation error",@OA\JsonContent
      *     (ref="#/components/schemas/ErrorResponse")
      * ),
      * @OA\Response(
+     *     response="403",
+     *     description="Not Authorized Invalid or missing Authorization header",@OA\
+     *     JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
      *     response=500,
-     *     description="Unexpected error"
-     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
-     *  ),
+     *     description="Unexpected error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
      * security={
      *     {"API-Key": {}}
      * }
      * )
      */
-    public function isAvailable(){
+    public function isAvailable(Request $request){
         $user = Auth::user();
-        if($user->is_available=='0'){
-            $user->is_available = '1';
-        } else{
-            $user->is_available = '0';
-        }
+        $user->is_available = $request->is_available;
         $user->save();
 
         return $this->sendResponse(
