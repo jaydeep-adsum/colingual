@@ -1291,7 +1291,7 @@ class UserController extends AppBaseController
                 if ($user->total_rate_5 > 0) {
                     $i++;
                 }
-                if ($user->user_id === Auth::id() && $user->like == "1") {
+                if ($user->userID === Auth::id() && $user->like == "1") {
                     $is_like = true;
                 }
                 $average_rating = 0;
