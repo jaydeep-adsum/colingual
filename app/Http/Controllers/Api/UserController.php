@@ -231,7 +231,7 @@ class UserController extends AppBaseController
             $input = $request->all();
 
             $user = $this->userRepository->create($input);
-            $language = explode(',',$request->languages);
+            $language = explode(',', $request->languages);
             $user->language()->attach($language[0]);
             $user->language()->updateExistingPivot($language[0], ['is_primary' => '1']);
             array_shift($language);
@@ -536,8 +536,8 @@ class UserController extends AppBaseController
         if (isset($request->email) && $request->email != '') {
             $user->email = $request->email;
         }
-        if (isset($request->languages) && $request->languages!= ''){
-            $language = explode(',',$request->languages);
+        if (isset($request->languages) && $request->languages != '') {
+            $language = explode(',', $request->languages);
             $user->language()->detach();
             $user->language()->attach($language[0]);
             $user->language()->updateExistingPivot($language[0], ['is_primary' => '1']);
@@ -545,11 +545,11 @@ class UserController extends AppBaseController
             $user->language()->attach($language);
             $user->language()->updateExistingPivot($language, ['is_primary' => '0']);
         }
-        if ($request->file('image') !== null){
+        if ($request->file('image') !== null) {
             $file = $request->file('image');
             $image_name = $file->getClientOriginalName();
-            $file->move(public_path('images'),$image_name);
-            $user->image_url = config('app.url').'public/images/'.$image_name;
+            $file->move(public_path('images'), $image_name);
+            $user->image_url = config('app.url') . 'public/images/' . $image_name;
         }
         if (isset($request->card_number) && $request->card_number != '') {
             $user->card_number = $request->card_number;
@@ -617,13 +617,62 @@ class UserController extends AppBaseController
      */
     public function getUser()
     {
-        $user = User::where('id',Auth::id())->with('likedUsers')->get();
-        dd($user);
+        $user = User::where('role', '0')->where('id', Auth::id())->with('likeUsers')->withcount(['likeUsers' => function ($query) {
+            $query->where('like', '1');
+        }])->first();
+
         if (is_null($user)) {
-            return $this->sendError('unauthorized');
+            return $this->sendError('User Not Found.');
         }
+        $star_1 = 0;
+        $star_2 = 0;
+        $star_3 = 0;
+        $star_4 = 0;
+        $star_5 = 0;
+        $i = 0;
+        foreach ($user->likeUsers as $likeUser) {
+            if ($likeUser->pivot->rating == 1) {
+                $i++;
+                $star_1 += 1;
+            }
+            if ($likeUser->pivot->rating == 2) {
+                $i++;
+                $star_2 += 1;
+            }
+            if ($likeUser->pivot->rating == 3) {
+                $i++;
+                $star_3 += 1;
+            }
+            if ($likeUser->pivot->rating == 4) {
+                $i++;
+                $star_4 += 1;
+            }
+            if ($likeUser->pivot->rating == 5) {
+                $i++;
+                $star_5 += 1;
+            }
+        }
+        $average_rating = 0;
+        if ($i > 0) {
+            $average_rating = (1 * $star_1 + 2 * $star_2 + 3 * $star_3 + 4 * $star_4 + 5 * $star_5) / $i;
+        }
+        $data = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'last_name' => $user->last_name,
+            'image_url' => $user->image_url,
+            'rating' => (string)$average_rating,
+            'colingual' => $user->colingual,
+            'video' => $user->video,
+            'audio' => $user->audio,
+            'chat' => $user->chat,
+            'is_available' => $user->is_available,
+            'like_users_count' => $user->like_users_count,
+            'language' => $user->language,
+        ];
+
         return $this->sendResponse(
-            $user, 'User profile updated Successfully.'
+            $data, 'User get Successfully.'
         );
     }
 
@@ -668,11 +717,12 @@ class UserController extends AppBaseController
      * }
      * )
      */
-    public function isColingual(){
+    public function isColingual()
+    {
         $user = Auth::user();
-        if($user->colingual=='0'){
+        if ($user->colingual == '0') {
             $user->colingual = '1';
-        } else{
+        } else {
             $user->colingual = '0';
         }
         $user->save();
@@ -723,11 +773,12 @@ class UserController extends AppBaseController
      * }
      * )
      */
-    public function isVideo(){
+    public function isVideo()
+    {
         $user = Auth::user();
-        if($user->video=='0'){
+        if ($user->video == '0') {
             $user->video = '1';
-        } else{
+        } else {
             $user->video = '0';
         }
         $user->save();
@@ -778,11 +829,12 @@ class UserController extends AppBaseController
      * }
      * )
      */
-    public function isAudio(){
+    public function isAudio()
+    {
         $user = Auth::user();
-        if($user->audio=='0'){
+        if ($user->audio == '0') {
             $user->audio = '1';
-        } else{
+        } else {
             $user->audio = '0';
         }
         $user->save();
@@ -833,11 +885,12 @@ class UserController extends AppBaseController
      * }
      * )
      */
-    public function isChat(){
+    public function isChat()
+    {
         $user = Auth::user();
-        if($user->chat=='0'){
+        if ($user->chat == '0') {
             $user->chat = '1';
-        } else{
+        } else {
             $user->chat = '0';
         }
         $user->save();
@@ -899,7 +952,8 @@ class UserController extends AppBaseController
      * }
      * )
      */
-    public function isAvailable(Request $request){
+    public function isAvailable(Request $request)
+    {
         $user = Auth::user();
         $user->is_available = $request->is_available;
         $user->save();
@@ -965,9 +1019,10 @@ class UserController extends AppBaseController
      * }
      * )
      */
-    public function isTranslator(Request $request){
+    public function isTranslator(Request $request)
+    {
         $user = Auth::user();
-        $user->language()->updateExistingPivot($request->language_id, ['translator'=>$request->translator]);
+        $user->language()->updateExistingPivot($request->language_id, ['translator' => $request->translator]);
 
         return $this->sendResponse($user, 'User makes translator Successfully.'
         );
@@ -1035,12 +1090,13 @@ class UserController extends AppBaseController
      * }
      * )
      */
-    public function addToFavourite(Request $request){
+    public function addToFavourite(Request $request)
+    {
         $user = Auth::user();
-        if($user->likedUsers()->where('liked_user_id',$request->user_id)->doesntExist()){
+        if ($user->likedUsers()->where('liked_user_id', $request->user_id)->doesntExist()) {
             $user->likedUsers()->attach($request->user_id);
         }
-        if ($request->like==1||$request->like==0) {
+        if ($request->like == 1 || $request->like == 0) {
             $user->likedUsers()->updateExistingPivot($request->user_id, ['like' => $request->like]);
         }
         if ($request->rating) {
@@ -1092,13 +1148,14 @@ class UserController extends AppBaseController
      * }
      * )
      */
-    public function getUsers(){
-        $users = User::where('role','0')->with('likeUsers')->withcount(['likeUsers' => function($query) {
-            $query->where('like','1');
+    public function getUsers()
+    {
+        $users = User::where('role', '0')->with('likeUsers')->withcount(['likeUsers' => function ($query) {
+            $query->where('like', '1');
         }])->get();
         $data = [];
-        foreach($users as $user){
-            if($user->id!=Auth::id()) {
+        foreach ($users as $user) {
+            if ($user->id != Auth::id()) {
                 $is_like = false;
                 $star_1 = 0;
                 $star_2 = 0;
@@ -1107,34 +1164,34 @@ class UserController extends AppBaseController
                 $star_5 = 0;
                 $i = 0;
                 foreach ($user->likeUsers as $likeUser) {
-                    if($likeUser->pivot->rating==1){
+                    if ($likeUser->pivot->rating == 1) {
                         $i++;
-                        $star_1+=1;
+                        $star_1 += 1;
                     }
-                    if($likeUser->pivot->rating==2){
+                    if ($likeUser->pivot->rating == 2) {
                         $i++;
-                        $star_2+=1;
+                        $star_2 += 1;
                     }
-                    if($likeUser->pivot->rating==3){
+                    if ($likeUser->pivot->rating == 3) {
                         $i++;
-                        $star_3+=1;
+                        $star_3 += 1;
                     }
-                    if($likeUser->pivot->rating==4){
+                    if ($likeUser->pivot->rating == 4) {
                         $i++;
-                        $star_4+=1;
+                        $star_4 += 1;
                     }
-                    if($likeUser->pivot->rating==5){
+                    if ($likeUser->pivot->rating == 5) {
                         $i++;
-                        $star_5+=1;
+                        $star_5 += 1;
                     }
                     if ($likeUser->pivot->user_id === Auth::id() && $likeUser->pivot->like == "1") {
                         $is_like = true;
                     }
                 }
                 $average_rating = 0;
-            if ($i>0) {
-                $average_rating = (1 * $star_1 + 2 * $star_2 + 3 * $star_3 + 4 * $star_4 + 5 * $star_5) / $i;
-            }
+                if ($i > 0) {
+                    $average_rating = (1 * $star_1 + 2 * $star_2 + 3 * $star_3 + 4 * $star_4 + 5 * $star_5) / $i;
+                }
                 $data[] = [
                     'id' => $user->id,
                     'name' => $user->name,
@@ -1152,10 +1209,10 @@ class UserController extends AppBaseController
                 ];
             }
         }
-        if($data){
+        if ($data) {
             return $this->sendResponse($data, 'Users get Successfully.');
         }
-        return $this->sendError( 'User not found.');
+        return $this->sendError('User not found.');
     }
 
     /**
@@ -1199,7 +1256,8 @@ class UserController extends AppBaseController
      * }
      * )
      */
-    public function getTranslatorUser(){
+    public function getTranslatorUser()
+    {
         $users = DB::select("SELECT *,users.id as userID,
        (SELECT count(rating) from user_likes where user_likes.liked_user_id = users.id AND `rating`=1) as total_rate_1,
        (SELECT count(rating) from user_likes where user_likes.liked_user_id = users.id AND `rating`=2) as total_rate_2,
@@ -1215,8 +1273,8 @@ class UserController extends AppBaseController
 
         $data = [];
         $is_like = false;
-        foreach($users as $user){
-            if($user->id!=Auth::id()) {
+        foreach ($users as $user) {
+            if ($user->id != Auth::id()) {
                 $i = 0;
                 if ($user->total_rate_1 > 0) {
                     $i++;
@@ -1262,14 +1320,13 @@ class UserController extends AppBaseController
                         'chat' => $user->chat,
                         'is_available' => $user->is_available,
                         'like_users_count' => $user->total_like,
-                        'language' => $languages,
                     ];
                 }
             }
         }
-        if($data){
+        if ($data) {
             return $this->sendResponse($data, 'Translators Successfully.');
         }
-        return $this->sendError( 'Translator not found.');
+        return $this->sendError('Translator not found.');
     }
 }

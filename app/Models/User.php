@@ -44,7 +44,7 @@ class User extends Authenticatable implements HasMedia
         'device_type',
     ];
 
-    protected $with = ['language'];
+//    protected $with = ['language'];
 
     /**
      * The attributes that should be hidden for arrays.
