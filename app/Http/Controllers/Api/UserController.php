@@ -1344,4 +1344,57 @@ class UserController extends AppBaseController
         }
         return $this->sendError('Translator not found.');
     }
+
+    /**
+     * Swagger definition for Products
+     *
+     * @OA\Get(
+     *     tags={"User"},
+     *     path="/logout",
+     *     description="Logout user",
+     *     summary="Logout user",
+     *     operationId="logout",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\Response(
+     *     response=200,
+     *     description="Succuess response"
+     *     ,@OA\JsonContent(ref="#/components/schemas/SuccessResponse")
+     *     ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="401",
+     *     description="Not Authorized Invalid or missing Authorization header"
+     *     ,@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *  ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function logout()
+    {
+        $user = Auth::user();
+        $user->device_token = null;
+        $user->device_type = null;
+        $user->save();
+
+        return $this->sendResponse(
+            $user, 'User profile updated Successfully.'
+        );
+    }
 }

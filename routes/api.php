@@ -30,6 +30,7 @@ Route::namespace('Api')->group(function () {
         Route::get('isColingual',[UserController::class,'isColingual']);
         Route::get('isVideo',[UserController::class,'isVideo']);
         Route::get('isAudio',[UserController::class,'isAudio']);
+        Route::get('logout',[UserController::class,'logout']);
         Route::get('isChat',[UserController::class,'isChat']);
         Route::post('isAvailable',[UserController::class,'isAvailable']);
         Route::post('quiz',[QuizController::class,'index']);
