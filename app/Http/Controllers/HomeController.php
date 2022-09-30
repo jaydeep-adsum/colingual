@@ -90,7 +90,7 @@ class HomeController extends Controller
                 }
 
             }
-
+//dd($data);
         $data['users'] = User::where('role','0')->get()->count();
 
         return view('dashboard',compact('data'));

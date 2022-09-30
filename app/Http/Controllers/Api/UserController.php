@@ -358,6 +358,14 @@ class UserController extends AppBaseController
      *     property="email_or_mobile",
      *     type="string"
      *     ),
+     * @OA\Property(
+     *     property="device_token",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="device_type",
+     *     type="string"
+     *     ),
      *    )
      *   ),
      *  ),
@@ -403,6 +411,7 @@ class UserController extends AppBaseController
             $credentials['email_or_mobile'] = $request->email_or_mobile;
 
             if ($user = $this->authenticator->attemptLogin($credentials)) {
+                $update = User::where('id', $user->id)->update(['device_token' => $request->device_token, 'device_type' => $request->device_type]);
                 $users = User::find($user->id);
                 $tokenResult = $user->createToken('colingual');
                 $token = $tokenResult->token;
@@ -1205,6 +1214,8 @@ class UserController extends AppBaseController
                     'chat' => $user->chat,
                     'is_available' => $user->is_available,
                     'like_users_count' => $user->like_users_count,
+                    'device_token' => $user->device_token,
+                    'device_type' => $user->device_type,
                     'language' => $user->language,
                 ];
             }
@@ -1291,9 +1302,7 @@ class UserController extends AppBaseController
                 if ($user->total_rate_5 > 0) {
                     $i++;
                 }
-                if ($user->userID === Auth::id() && $user->like == "1") {
-                    $is_like = true;
-                }
+                $is_like = false;
                 $average_rating = 0;
                 if ($i > 0) {
                     $average_rating = (1 * $user->total_rate_1 + 2 * $user->total_rate_2 + 3 * $user->total_rate_3 + 4 * $user->total_rate_4 + 5 * $user->total_rate_5) / $i;
@@ -1307,6 +1316,9 @@ class UserController extends AppBaseController
                 }
 
                 if ($j == count($languages)) {
+                    if ($user->user_id == Auth::id() && $user->like == "1") {
+                        $is_like = true;
+                    }
                     $data[] = [
                         'id' => $user->userID,
                         'name' => $user->name,
@@ -1321,6 +1333,8 @@ class UserController extends AppBaseController
                         'chat' => $user->chat,
                         'is_available' => $user->is_available,
                         'like_users_count' => $user->total_like,
+                        'device_token' => $user->device_token,
+                        'device_type' => $user->device_type,
                     ];
                 }
             }
