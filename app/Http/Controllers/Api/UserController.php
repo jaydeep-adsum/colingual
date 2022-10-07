@@ -412,7 +412,75 @@ class UserController extends AppBaseController
 
             if ($user = $this->authenticator->attemptLogin($credentials)) {
                 $update = User::where('id', $user->id)->update(['device_token' => $request->device_token, 'device_type' => $request->device_type]);
-                $users = User::find($user->id);
+                $user = User::where('role', '0')->where('id', $user->id)->with('likeUsers')->withcount(['likeUsers' => function ($query) {
+                    $query->where('like', '1');
+                }])->first();
+                $is_like = false;
+                $star_1 = 0;
+                $star_2 = 0;
+                $star_3 = 0;
+                $star_4 = 0;
+                $star_5 = 0;
+                $i = 0;
+                foreach ($user->likeUsers as $likeUser) {
+                    if ($likeUser->pivot->rating == 1) {
+                        $i++;
+                        $star_1 += 1;
+                    }
+                    if ($likeUser->pivot->rating == 2) {
+                        $i++;
+                        $star_2 += 1;
+                    }
+                    if ($likeUser->pivot->rating == 3) {
+                        $i++;
+                        $star_3 += 1;
+                    }
+                    if ($likeUser->pivot->rating == 4) {
+                        $i++;
+                        $star_4 += 1;
+                    }
+                    if ($likeUser->pivot->rating == 5) {
+                        $i++;
+                        $star_5 += 1;
+                    }
+                    if ($likeUser->pivot->user_id === Auth::id() && $likeUser->pivot->like == "1") {
+                        $is_like = true;
+                    }
+                }
+                $average_rating = 0;
+                if ($i > 0) {
+                    $average_rating = (1 * $star_1 + 2 * $star_2 + 3 * $star_3 + 4 * $star_4 + 5 * $star_5) / $i;
+                }
+                $languages = DB::select("SELECT * FROM `language_user` JOIN languages on language_user.language_id=languages.id where user_id='.$user->id.'");
+
+                $j = 0;
+                foreach ($languages as $language) {
+                    if ($language->translator == '1') {
+                        $j++;
+                    }
+                }
+                $is_verified = "";
+                if ($j == count($languages)) {
+                    $is_verified = "1";
+                }
+                $data[] = [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'last_name' => $user->last_name,
+                    'image_url' => $user->image_url,
+                    'is_like' => $is_like,
+                    'rating' => (string)$average_rating,
+                    'colingual' => $user->colingual,
+                    'video' => $user->video,
+                    'audio' => $user->audio,
+                    'chat' => $user->chat,
+                    'is_available' => $user->is_available,
+                    'is_verified' => $is_verified,
+                    'like_users_count' => $user->like_users_count,
+                    'device_token' => $user->device_token,
+                    'device_type' => $user->device_type,
+                    'language' => $user->language,
+                ];
                 $tokenResult = $user->createToken('colingual');
                 $token = $tokenResult->token;
                 $token->save();
@@ -420,7 +488,7 @@ class UserController extends AppBaseController
                 $success['expires_at'] = Carbon::parse(
                     $tokenResult->token->expires_at
                 )->toDateTimeString();
-                $success['user'] = $users;
+                $success['user'] = $data;
 
                 return $this->sendResponse(
                     $success, 'You Have Successfully Logged in to colingual.'
@@ -633,6 +701,7 @@ class UserController extends AppBaseController
         if (is_null($user)) {
             return $this->sendError('User Not Found.');
         }
+        $is_like = false;
         $star_1 = 0;
         $star_2 = 0;
         $star_3 = 0;
@@ -660,23 +729,42 @@ class UserController extends AppBaseController
                 $i++;
                 $star_5 += 1;
             }
+            if ($likeUser->pivot->user_id === Auth::id() && $likeUser->pivot->like == "1") {
+                $is_like = true;
+            }
         }
         $average_rating = 0;
         if ($i > 0) {
             $average_rating = (1 * $star_1 + 2 * $star_2 + 3 * $star_3 + 4 * $star_4 + 5 * $star_5) / $i;
         }
-        $data = [
+        $languages = DB::select("SELECT * FROM `language_user` JOIN languages on language_user.language_id=languages.id where user_id='.$user->id.'");
+
+        $j = 0;
+        foreach ($languages as $language) {
+            if ($language->translator == '1') {
+                $j++;
+            }
+        }
+        $is_verified = "";
+        if ($j == count($languages)) {
+            $is_verified = "1";
+        }
+        $data[] = [
             'id' => $user->id,
             'name' => $user->name,
             'last_name' => $user->last_name,
             'image_url' => $user->image_url,
+            'is_like' => $is_like,
             'rating' => (string)$average_rating,
             'colingual' => $user->colingual,
             'video' => $user->video,
             'audio' => $user->audio,
             'chat' => $user->chat,
             'is_available' => $user->is_available,
+            'is_verified' => $is_verified,
             'like_users_count' => $user->like_users_count,
+            'device_token' => $user->device_token,
+            'device_type' => $user->device_type,
             'language' => $user->language,
         ];
 
