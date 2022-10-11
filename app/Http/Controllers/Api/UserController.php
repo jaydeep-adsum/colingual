@@ -757,7 +757,7 @@ class UserController extends AppBaseController
         if ($j == count($languages)) {
             $is_verified = "1";
         }
-        $data[] = [
+        $data = [
             'id' => $user->id,
             'name' => $user->name,
             'last_name' => $user->last_name,

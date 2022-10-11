@@ -1,5 +1,27 @@
 @extends('layouts.app')
 @section('content')
+    <style>
+      .user-img{
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          margin-right: 5px;
+      }
+      .like-div {
+          position: relative;
+          text-align: center;
+          color: white;
+      }
+
+      .centered {
+          position: absolute;
+          top: 40%;
+          left: 50%;
+          font-weight: bold;
+          font-size: 11px;
+          transform: translate(-50%, -50%);
+      }
+    </style>
     <div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
     </div>
     <div class="container-fluid mt--7">
@@ -22,9 +44,7 @@
                             <thead class="thead-light">
                             <tr>
                                 <th scope="col">{{__('Name')}}</th>
-                                <th scope="col">{{__('Last')}}</th>
                                 <th scope="col">{{__('Mobile')}}</th>
-                                <th scope="col">{{__('Email')}}</th>
                                 <th scope="col">{{__('Login By')}}</th>
                                 <th scope="col">{{__('Action')}}</th>
                             </tr>
@@ -82,39 +102,94 @@
             //         'width': '11%'
             //     },
                 {
-                    'targets': [4],
+                    'targets': [3,2],
                     'className': 'text-center',
                     'orderable': false
                 }
             ],
             columns: [
                 {
-                    data: 'name',
+                    data: function data(row) {
+                        let image = "{{asset('public/assets/img/default_user.png')}}";
+                        if(row.image_url){
+                            image = row.image_url;
+                        }
+                        let like = "{{asset('public/assets/img/heart.png')}}";
+                        let star_1 = 0;
+                        let star_2 = 0;
+                        let star_3 = 0;
+                        let star_4 = 0;
+                        let star_5 = 0;
+                        let i = 0;
+                        let average_rating = 0;
+                        for(i; i <= row.like_users.length; i++) {
+                            if (row.like_users[i] != null && row.like_users[i].pivot.rating == 1) {
+                                star_1 += 1;
+                            }
+                            if (row.like_users[i] != null && row.like_users[i].pivot.rating == 2) {
+                                star_2 += 1;
+                            }
+                            if (row.like_users[i] != null && row.like_users[i].pivot.rating == 3) {
+                                star_3 += 1;
+                            }
+                            if (row.like_users[i] != null && row.like_users[i].pivot.rating == 4) {
+                                star_4 += 1;
+                            }
+                            if (row.like_users[i] != null && row.like_users[i].pivot.rating == 5) {
+                                star_5 += 1;
+                            }
+
+                            if (i > 0) {
+                                average_rating = (1 * star_1 + 2 * star_2 + 3 * star_3 + 4 * star_4 + 5 * star_5) / i;
+                            }
+                        }
+                        function abbrNum(number, decPlaces) {
+                            decPlaces = Math.pow(10,decPlaces);
+                            var abbrev = [ "k", "m", "b", "t" ];
+                            for (var i=abbrev.length-1; i>=0; i--) {
+                                var size = Math.pow(10,(i+1)*3);
+                                if(size <= number) {
+                                    number = Math.round(number*decPlaces/size)/decPlaces;
+                                    if((number == 1000) && (i < abbrev.length - 1)) {
+                                        number = 1;
+                                        i++;
+                                    }
+                                    number += abbrev[i];
+                                    break;
+                                }
+                            }
+                            return number;
+                        }
+                        let star ="";
+                        if(average_rating<=0){
+                            star = '<svg width="17px" height="17px" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.09608 0.484964C8.26115 0.150539 8.73804 0.150538 8.90311 0.484964L10.97 4.67224C11.0355 4.80492 11.162 4.89693 11.3084 4.91833L15.9312 5.59402C16.3002 5.64795 16.4472 6.10148 16.1801 6.36165L12.8358 9.619C12.7297 9.72238 12.6812 9.87139 12.7063 10.0174L13.4954 14.6187C13.5585 14.9863 13.1726 15.2666 12.8425 15.093L8.70905 12.9193C8.57792 12.8503 8.42126 12.8503 8.29014 12.9193L4.15673 15.093C3.82659 15.2666 3.4407 14.9863 3.50375 14.6187L4.29292 10.0174C4.31796 9.87139 4.26951 9.72238 4.16337 9.619L0.819066 6.36165C0.551949 6.10148 0.699001 5.64795 1.06796 5.59402L5.69076 4.91833C5.83717 4.89693 5.9637 4.80492 6.02919 4.67224L8.09608 0.484964Z" fill="#D1D1D1"/></svg>';
+                        } else {
+                            let per = average_rating*100/5;
+                            let percentage = Math.round(per)+"%";
+                            star = '<svg width="17px" height="17px" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.09608 0.484964C8.26115 0.150539 8.73804 0.150538 8.90311 0.484964L10.97 4.67224C11.0355 4.80492 11.162 4.89693 11.3084 4.91833L15.9312 5.59402C16.3002 5.64795 16.4472 6.10148 16.1801 6.36165L12.8358 9.619C12.7297 9.72238 12.6812 9.87139 12.7063 10.0174L13.4954 14.6187C13.5585 14.9863 13.1726 15.2666 12.8425 15.093L8.70905 12.9193C8.57792 12.8503 8.42126 12.8503 8.29014 12.9193L4.15673 15.093C3.82659 15.2666 3.4407 14.9863 3.50375 14.6187L4.29292 10.0174C4.31796 9.87139 4.26951 9.72238 4.16337 9.619L0.819066 6.36165C0.551949 6.10148 0.699001 5.64795 1.06796 5.59402L5.69076 4.91833C5.83717 4.89693 5.9637 4.80492 6.02919 4.67224L8.09608 0.484964Z" fill="url(#grad1)"/> <defs><linearGradient id="grad1" x1="0%" y1="0%" x2="'+percentage+'" y2="0%"><stop offset="0%" style="stop-color:rgba(255,200,0,1);" /><stop offset="'+percentage+'" style="stop-color:rgba(255,200,0,1);" /><stop offset="100%" style="stop-color:rgba(209,209,209,1);" /></linearGradient></defs></svg>';
+                        }
+                        return `<div class="d-flex justify-content-between"> <div class="d-flex align-items-center"><div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
+<div class=""><img src="${image}" alt="" class="user-img"></div></div><div class="d-flex flex-column"><span>${row.name} ${row.last_name} &nbsp; ${star}
+ ${average_rating.toFixed(2)}</span>
+<span>${row.email}</span></div></div><div class="like-div mr-4"><img src="${like}" alt="" height="30px" width="30px"><div class="centered">${abbrNum(row.like_users.length,2)}</div></div></div>`;
+                    },
                     name: 'name'
-                },
-                {
-                    data: 'last_name',
-                    name: 'last_name'
                 },
                 {
                     data: 'mobile_no',
                     name: 'mobile_no'
                 },
                 {
-                    data: 'email',
-                    name: 'email '
-                },
-                {
                     data: function data(row) {
+                        let login = "{{asset('public/assets/img/mobile.png')}}";
                         if (row.login_by==2){
-                            return `<i class="fas fa-apple-alt"></i>`
+                            login = "{{asset('public/assets/img/apple.png')}}";
                         } else if (row.login_by==3){
-                            return `<i class="fa fa-facebook-square"></i>`
+                            login = "{{asset('public/assets/img/facebook.png')}}";
                         } else if (row.login_by==4){
-                            return `<i class="fa fa-google"></i>`
-                        } else {
-                            return `<i class="fas fa-mobile-alt"></i>`
+                            login = "{{asset('public/assets/img/google.png')}}";
                         }
+                            return `<img src="${login}" alt="" height="20px" width="20px">`
                     },
                     name: 'login_by'
                 },

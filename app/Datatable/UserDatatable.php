@@ -15,6 +15,7 @@ class UserDatatable
         /** @var User $query */
         $query = User::query()->select('users.*');
         $query->where('role','0');
+        $query->with('likeUsers');
 
         return $query;
     }
