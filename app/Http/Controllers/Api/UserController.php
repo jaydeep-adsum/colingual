@@ -463,7 +463,7 @@ class UserController extends AppBaseController
                 if ($j == count($languages)) {
                     $is_verified = "1";
                 }
-                $data[] = [
+                $data = [
                     'id' => $user->id,
                     'name' => $user->name,
                     'last_name' => $user->last_name,
@@ -615,12 +615,20 @@ class UserController extends AppBaseController
         }
         if (isset($request->languages) && $request->languages != '') {
             $language = explode(',', $request->languages);
+            $language_arr = explode(',', $request->languages);
+            $languages = $user->language()->get();
             $user->language()->detach();
             $user->language()->attach($language[0]);
             $user->language()->updateExistingPivot($language[0], ['is_primary' => '1']);
             array_shift($language);
             $user->language()->attach($language);
             $user->language()->updateExistingPivot($language, ['is_primary' => '0']);
+            foreach ($languages as $lang){
+                if(in_array($lang->id,$language_arr)){
+                    $user->language()->updateExistingPivot($lang->id, ['translator' => $lang->pivot->translator]);
+                }
+            }
+//            $user->language()->updateExistingPivot($request->language_id, ['translator' => $request->translator]);
         }
         if ($request->file('image') !== null) {
             $file = $request->file('image');
