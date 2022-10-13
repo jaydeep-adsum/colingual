@@ -77,7 +77,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{Request::is('user')?'active':''}}" href="{{ route('user') }}">
+                    <a class="nav-link {{Request::is('user*')?'active':''}}" href="{{ route('user') }}">
                         <i class="far fa-user"></i>{{ __('Users') }}
                     </a>
                 </li>

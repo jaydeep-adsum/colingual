@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
 use Carbon\CarbonTimeZone;
+use DB;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -17,7 +18,9 @@ use Illuminate\Http\Request;
 use Flash;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\DataTableAbstract;
 use Yajra\DataTables\DataTables;
+use Yajra\DataTables\EloquentDataTable;
 
 
 class UserController extends AppBaseController
@@ -32,13 +35,49 @@ class UserController extends AppBaseController
 
     /**
      * @param Request $request
-     * @return Application|Factory|View
+     * @return Application|Factory|View|DataTableAbstract|EloquentDataTable
      * @throws Exception
      */
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return Datatables::of((new UserDatatable())->get())->make(true);
+            return Datatables::of((new UserDatatable())->get())->addColumn('is_verified', function(User $user) {
+                $languages = DB::select("SELECT * FROM `language_user` JOIN languages on language_user.language_id=languages.id where user_id='.$user->id.'");
+
+                $j = 0;
+                foreach ($languages as $language) {
+                    if ($language->translator == '1') {
+                        $j++;
+                    }
+                }
+                $is_verified = "";
+                if ($j == count($languages)) {
+                    $is_verified = "1";
+                }
+                return $is_verified;
+            })
+                ->addColumn('primary_language', function(User $user) {
+                    $languages = DB::select("SELECT * FROM `language_user` JOIN languages on language_user.language_id=languages.id where user_id='.$user->id.'");
+                    $primary_language = "";
+                    foreach ($languages as $language) {
+                        if ($language->is_primary == '1') {
+                            $primary_language = $language->language;
+                        }
+                    }
+                    return $primary_language;
+                })
+                ->addColumn('language', function(User $user) {
+                    $languages = DB::select("SELECT * FROM `language_user` JOIN languages on language_user.language_id=languages.id where user_id='.$user->id.'");
+                    $languageArr = [];
+                    foreach ($languages as $language) {
+                        if ($language->is_primary == '0') {
+                            $languageArr[] = $language->language;
+                        }
+                    }
+
+                    return implode(',',$languageArr);
+                })
+                ->toJson();
         }
         return view('users.index');
     }
