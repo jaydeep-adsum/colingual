@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\CallHistoryController;
 use App\Http\Controllers\Api\LanguageController;
 use App\Http\Controllers\Api\QuizController;
 use App\Http\Controllers\Api\UserController;
@@ -38,5 +39,7 @@ Route::namespace('Api')->group(function () {
         Route::post('add_remove_favourite_rating',[UserController::class,'addToFavourite']);
         Route::get('getUserList',[UserController::class,'getUsers']);
         Route::get('getTranslatorList',[UserController::class,'getTranslatorUser']);
+        Route::post('call_history', [CallHistoryController::class, 'create']);
+        Route::get('call_history', [CallHistoryController::class, 'show']);
     });
 });

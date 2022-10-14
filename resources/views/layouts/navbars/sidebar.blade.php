@@ -82,6 +82,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {{Request::is('call_history*')?'active':''}}" href="{{ route('call_history') }}">
+                        <img src="{{asset('public/assets/img/call_history.png')}}" width="15px" height="20px" style="margin-right: 20px">{{ __('Call History') }}
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {{Request::is('language')?'active':''}}" href="{{ route('language.index') }}">
                         <i class="fas fa-language"></i>{{ __('Languages') }}
                     </a>

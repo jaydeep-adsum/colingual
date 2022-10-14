@@ -76,6 +76,7 @@
         <script src="{{asset('public/assets/vendor/datatables.net-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
         <script type="text/javascript" src="{{ asset('public/assets/vendor/datatables.net-buttons/js/dataTables.buttons.min.js')}}"></script>
         <script src="{{ asset('public/js/custom.js') }}"></script>
+        <script src="{{ asset('public/assets/vendor/moment/moment.js')}}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="{{ asset('public/js/iziToast.js') }}"></script>
         @stack('js')

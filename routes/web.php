@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CallHistoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\QuizController;
@@ -43,5 +44,8 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('quiz/{id}/edit', [QuizController::class, 'edit'])->name('quiz.edit');
     Route::post('quiz/update/{id}', [QuizController::class, 'update'])->name('quiz.update');
     Route::delete('quiz/{quiz}', [QuizController::class, 'destroy'])->name('quiz.destroy');
+
+    Route::get('call_history',[CallHistoryController::class,'index'])->name('call_history');
+    Route::delete('call_history/{call_history}', [CallHistoryController::class, 'destroy'])->name('call_history.destroy');
 });
 
