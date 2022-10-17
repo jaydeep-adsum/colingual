@@ -112,26 +112,32 @@
                             let star_4 = 0;
                             let star_5 = 0;
                             let i = 0;
+                            let j = 0;
                             let average_rating = 0;
                             for (i; i <= row.like_users.length; i++) {
                                 if (row.like_users[i] != null && row.like_users[i].pivot.rating == 1) {
                                     star_1 += 1;
+                                    j++;
                                 }
                                 if (row.like_users[i] != null && row.like_users[i].pivot.rating == 2) {
                                     star_2 += 1;
+                                    j++;
                                 }
                                 if (row.like_users[i] != null && row.like_users[i].pivot.rating == 3) {
                                     star_3 += 1;
+                                    j++;
                                 }
                                 if (row.like_users[i] != null && row.like_users[i].pivot.rating == 4) {
                                     star_4 += 1;
+                                    j++;
                                 }
                                 if (row.like_users[i] != null && row.like_users[i].pivot.rating == 5) {
                                     star_5 += 1;
+                                    j++;
                                 }
 
-                                if (i > 0) {
-                                    average_rating = (1 * star_1 + 2 * star_2 + 3 * star_3 + 4 * star_4 + 5 * star_5) / i;
+                                if (j > 0) {
+                                    average_rating = (1 * star_1 + 2 * star_2 + 3 * star_3 + 4 * star_4 + 5 * star_5) / j;
                                 }
                             }
 

@@ -195,12 +195,14 @@ class CallHistoryController extends AppBaseController
             if ($i > 0) {
                 $average_rating = (1 * $star_1 + 2 * $star_2 + 3 * $star_3 + 4 * $star_4 + 5 * $star_5) / $i;
             }
+
             $data[] = [
               'id'=> $callHistory->id,
               'user_id'=> $callHistory->user_id,
               'call_user_id'=> $callHistory->call_user_id,
               'duration'=> $callHistory->duration,
               'call_type'=> $callHistory->call_type,
+              'image_url'=>$callHistory->call_user->image_url,
               'tip'=> $callHistory->tip,
               'created_at'=> $callHistory->created_at,
               'updated_at'=> $callHistory->updated_at,
@@ -216,6 +218,7 @@ class CallHistoryController extends AppBaseController
                 $data, 'Successfully'
             );
         }
+        return $this->sendError('Call History not available.');
     }
 
 

@@ -1365,58 +1365,127 @@ class UserController extends AppBaseController
      */
     public function getTranslatorUser()
     {
-        $users = DB::select("SELECT *,users.id as userID,
-       (SELECT count(rating) from user_likes where user_likes.liked_user_id = users.id AND `rating`=1) as total_rate_1,
-       (SELECT count(rating) from user_likes where user_likes.liked_user_id = users.id AND `rating`=2) as total_rate_2,
-       (SELECT count(rating) from user_likes where user_likes.liked_user_id = users.id AND `rating`=3) as total_rate_3,
-       (SELECT count(rating) from user_likes where user_likes.liked_user_id = users.id AND `rating`=4) as total_rate_4,
-       (SELECT count(rating) from user_likes where user_likes.liked_user_id = users.id AND `rating`=5) as total_rate_5,
-       (SELECT COUNT(`like`) as total_like from user_likes where user_likes.liked_user_id = users.id AND `like`='1') as total_like
-        FROM `users`
-        LEFT JOIN `user_likes` on `users`.`id` = `user_likes`.`user_id`
-        WHERE `role`='0'
-        GROUP BY `user_likes`.`user_id`
-        order by total_like desc");
+//        $users = DB::select("SELECT *,users.id as userID,
+//       (SELECT count(rating) from user_likes where user_likes.liked_user_id = users.id AND `rating`=1) as total_rate_1,
+//       (SELECT count(rating) from user_likes where user_likes.liked_user_id = users.id AND `rating`=2) as total_rate_2,
+//       (SELECT count(rating) from user_likes where user_likes.liked_user_id = users.id AND `rating`=3) as total_rate_3,
+//       (SELECT count(rating) from user_likes where user_likes.liked_user_id = users.id AND `rating`=4) as total_rate_4,
+//       (SELECT count(rating) from user_likes where user_likes.liked_user_id = users.id AND `rating`=5) as total_rate_5,
+//       (SELECT COUNT(`like`) as total_like from user_likes where user_likes.liked_user_id = users.id AND `like`='1') as total_like
+//        FROM `users`
+//        LEFT JOIN `user_likes` on `users`.`id` = `user_likes`.`user_id`
+//        WHERE `role`='0'
+//        GROUP BY `user_likes`.`user_id`
+//        order by total_like desc");
+//
+//        $data = [];
+//        $is_like = false;
+//        foreach ($users as $user) {
+//            if ($user->userID != Auth::id()) {
+//                $i = 0;
+//                if ($user->total_rate_1 > 0) {
+//                    $i++;
+//                }
+//                if ($user->total_rate_2 > 0) {
+//                    $i++;
+//                }
+//                if ($user->total_rate_3 > 0) {
+//                    $i++;
+//                }
+//                if ($user->total_rate_4 > 0) {
+//                    $i++;
+//                }
+//                if ($user->total_rate_5 > 0) {
+//                    $i++;
+//                }
+//                $is_like = false;
+//                $average_rating = 0;
+//                if ($i > 0) {
+//                    $average_rating = (1 * $user->total_rate_1 + 2 * $user->total_rate_2 + 3 * $user->total_rate_3 + 4 * $user->total_rate_4 + 5 * $user->total_rate_5) / $i;
+//                }
+//                $languages = DB::select("SELECT * FROM `language_user` JOIN languages on language_user.language_id=languages.id where user_id='.$user->userID.'");
+//                $j = 0;
+//                foreach ($languages as $language) {
+//                    if ($language->translator == '1') {
+//                        $j++;
+//                    }
+//                }
+//
+//                if ($j == count($languages)) {
+//                    if ($user->user_id == Auth::id() && $user->like == "1") {
+//                        $is_like = true;
+//                    }
+//                    $data[] = [
+//                        'id' => $user->userID,
+//                        'name' => $user->name,
+//                        'last_name' => $user->last_name,
+//                        'image_url' => $user->image_url,
+//                        'is_like' => $is_like,
+//                        'rating' => (string)$average_rating,
+//                        'colingual' => $user->colingual,
+//                        'video' => $user->video,
+//                        'is_verified'=> "1",
+//                        'audio' => $user->audio,
+//                        'chat' => $user->chat,
+//                        'is_available' => $user->is_available,
+//                        'like_users_count' => $user->total_like,
+//                        'device_token' => $user->device_token,
+//                        'device_type' => $user->device_type,
+//                    ];
+//                }
+//            }
+//        }
+        $users = User::where('role', '0')->with('likeUsers')->withcount(['likeUsers' => function ($query) {
+            $query->where('like', '1');
+        },'language'])->get();
 
-        $data = [];
-        $is_like = false;
         foreach ($users as $user) {
-            if ($user->userID != Auth::id()) {
-                $i = 0;
-                if ($user->total_rate_1 > 0) {
-                    $i++;
-                }
-                if ($user->total_rate_2 > 0) {
-                    $i++;
-                }
-                if ($user->total_rate_3 > 0) {
-                    $i++;
-                }
-                if ($user->total_rate_4 > 0) {
-                    $i++;
-                }
-                if ($user->total_rate_5 > 0) {
-                    $i++;
-                }
+            if ($user->id != \Illuminate\Support\Facades\Auth::id()) {
                 $is_like = false;
+                $star_1 = 0;
+                $star_2 = 0;
+                $star_3 = 0;
+                $star_4 = 0;
+                $star_5 = 0;
+                $i = 0;
+                foreach ($user->likeUsers as $likeUser) {
+                    if ($likeUser->pivot->rating == 1) {
+                        $i++;
+                        $star_1 += 1;
+                    }
+                    if ($likeUser->pivot->rating == 2) {
+                        $i++;
+                        $star_2 += 1;
+                    }
+                    if ($likeUser->pivot->rating == 3) {
+                        $i++;
+                        $star_3 += 1;
+                    }
+                    if ($likeUser->pivot->rating == 4) {
+                        $i++;
+                        $star_4 += 1;
+                    }
+                    if ($likeUser->pivot->rating == 5) {
+                        $i++;
+                        $star_5 += 1;
+                    }
+                    if ($likeUser->pivot->user_id === Auth::id() && $likeUser->pivot->like == "1") {
+                        $is_like = true;
+                    }
+                }
                 $average_rating = 0;
                 if ($i > 0) {
-                    $average_rating = (1 * $user->total_rate_1 + 2 * $user->total_rate_2 + 3 * $user->total_rate_3 + 4 * $user->total_rate_4 + 5 * $user->total_rate_5) / $i;
+                    $average_rating = (1 * $star_1 + 2 * $star_2 + 3 * $star_3 + 4 * $star_4 + 5 * $star_5) / $i;
                 }
-                $languages = DB::select("SELECT * FROM `language_user` JOIN languages on language_user.language_id=languages.id where user_id='.$user->userID.'");
                 $j = 0;
-                foreach ($languages as $language) {
-                    if ($language->translator == '1') {
+                foreach ($user->language as $language) {
+                    if ($language->pivot->translator == '1') {
                         $j++;
                     }
                 }
-
-                if ($j == count($languages)) {
-                    if ($user->user_id == Auth::id() && $user->like == "1") {
-                        $is_like = true;
-                    }
+                if ($j == $user->language_count) {
                     $data[] = [
-                        'id' => $user->userID,
+                        'id' => $user->id,
                         'name' => $user->name,
                         'last_name' => $user->last_name,
                         'image_url' => $user->image_url,
@@ -1424,17 +1493,21 @@ class UserController extends AppBaseController
                         'rating' => (string)$average_rating,
                         'colingual' => $user->colingual,
                         'video' => $user->video,
-                        'is_verified'=> "1",
                         'audio' => $user->audio,
                         'chat' => $user->chat,
                         'is_available' => $user->is_available,
-                        'like_users_count' => $user->total_like,
+                        'like_users_count' => $user->like_users_count,
                         'device_token' => $user->device_token,
                         'device_type' => $user->device_type,
+                        'language' => $user->language,
                     ];
                 }
             }
         }
+
+        usort($data, fn($a, $b) => $a['like_users_count'] <=> $b['like_users_count']);
+        $data = array_reverse($data);
+
         if ($data) {
             return $this->sendResponse($data, 'Translators Successfully.');
         }
